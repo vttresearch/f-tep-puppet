@@ -4,7 +4,6 @@
 
 1. [Description](#description)
 1. [Setup - The basics of getting started with ftep](#setup)
-    * [What ftep affects](#what-ftep-affects)
     * [Setup requirements](#setup-requirements)
     * [Beginning with ftep](#beginning-with-ftep)
 1. [Usage - Configuration options and additional functionality](#usage)
@@ -14,70 +13,37 @@
 
 ## Description
 
-Start with a one- or two-sentence summary of what the module does and/or what
-problem it solves. This is your 30-second elevator pitch for your module.
-Consider including OS/Puppet version it works with.
+The ftep module lets you use Puppet to install and configure the Forestry TEP
+service infrastructure.
 
-You can give more descriptive information in a second paragraph. This paragraph
-should answer the questions: "What does this module *do*?" and "Why would I use
-it?" If your module has a range of functionality (installation, configuration,
-management, etc.), this is the time to mention it.
+[F-TEP](https://github.com/cgi-eoss/f-tep) is an open platform for the forestry
+community to access and exploit EO data. This Puppet module may be used to
+set up the various components including the community hub, the F-TEP webapp,
+and the processing manager.
+
+**Note:** Currently this module is only compatible with CentOS 6.
+
+**<span style="color:red;">Warning:</span>** This module is incomplete.
 
 ## Setup
 
-### What ftep affects **OPTIONAL**
+### Setup Requirements
 
-If it's obvious what your module touches, you can skip this section. For
-example, folks can probably figure out that your mysql_instance module affects
-their MySQL instances.
-
-If there's more that they should know about, though, this is the place to mention:
-
-* A list of files, packages, services, or operations that the module will alter,
-  impact, or execute.
-* Dependencies that your module automatically installs.
-* Warnings or other important notices.
-
-### Setup Requirements **OPTIONAL**
-
-If your module requires anything extra before setting up (pluginsync enabled,
-etc.), mention it here.
-
-If your most recent release breaks compatibility or requires particular steps
-for upgrading, you might want to include an additional "Upgrading" section
-here.
-
-### Beginning with ftep
-
-The very basic steps needed for a user to get the module up and running. This
-can include setup steps, if necessary, or it can be an example of the most
-basic use of the module.
+* This module may manage a yum repository for package installation with the
+  parameter `ftep::repo::location`. This may be the URL of a hosted repo, or
+  an on-disk path to a static repo (e.g. built with `createrepo`) in the format
+  `file:///path/to/fteprepo/$releasever/local/$basearch`. The latter is useful
+  for standalone `puppet apply` deployments.
 
 ## Usage
 
-This section is where you describe how to customize, configure, and do the
-fancy stuff with your module here. It's especially helpful if you include usage
-examples and code samples for doing things with your module.
+The ftep module may be used to install the F-TEP components individually by the
+classes:
+* `ftep::portal` (TBD)
+* `ftep::backend` (in progress)
 
-## Reference
-
-Here, include a complete list of your module's classes, types, providers,
-facts, along with the parameters for each. Users refer to this section (thus
-the name "Reference") to find specific details; most users don't read it per
-se.
+Configuration parameters shared by these classes may be set via `ftep::globals`.
 
 ## Limitations
 
-This is where you list OS compatibility, version compatibility, etc. If there
-are Known Issues, you might want to include them under their own heading here.
-
-## Development
-
-Since your module is awesome, other users will want to play with it. Let them
-know what the ground rules for contributing are.
-
-## Release Notes/Contributors/Etc. **Optional**
-
-If you aren't using changelog, put your release notes here (though you should
-consider using changelog). You can also add any additional sections you feel
-are necessary or important to include here. Please use the `## ` header.
+This module currently only targets installation on CentOS 6 nodes.

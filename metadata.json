@@ -8,7 +8,7 @@
   "project_page": "https://github.com/cgi-eoss/puppet-ftep",
   "issues_url": "https://github.com/cgi-eoss/puppet-ftep/issues",
   "dependencies": [
-    { "name": "puppetlabs-stdlib", "version_requirement": ">= 4.0.0" }
+    { "name": "puppetlabs-stdlib", "version_requirement": ">= 4.13.1" }
   ],
   "data_provider": null,
   "operatingsystem_support": [
@@ -22,7 +22,7 @@
   "requirements": [
     {
       "name": "puppet",
-      "version_requirement": ">= 3.4.0"
+      "version_requirement": ">= 4.7.0"
     }
   ]
 }
