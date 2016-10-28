@@ -1,0 +1,28 @@
+{
+  "name": "cgieoss-ftep",
+  "version": "0.1.0",
+  "author": "cgieoss",
+  "summary": "Installation and configuration of F-TEP components",
+  "license": "Apache-2.0",
+  "source": "https://github.com/cgi-eoss/puppet-ftep",
+  "project_page": "https://github.com/cgi-eoss/puppet-ftep",
+  "issues_url": "https://github.com/cgi-eoss/puppet-ftep/issues",
+  "dependencies": [
+    { "name": "puppetlabs-stdlib", "version_requirement": ">= 4.0.0" }
+  ],
+  "data_provider": null,
+  "operatingsystem_support": [
+    {
+      "operatingsystem": "CentOS",
+      "operatingsystemrelease": [
+        "6"
+      ]
+    }
+  ],
+  "requirements": [
+    {
+      "name": "puppet",
+      "version_requirement": ">= 3.4.0"
+    }
+  ]
+}
