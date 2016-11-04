@@ -9,6 +9,8 @@
 #
 class ftep::backend() {
 
+  require ::ftep::globals
+
   contain ::ftep::backend::zoo_kernel
 
 }

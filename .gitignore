@@ -1,4 +1,5 @@
-spec/fixtures
+spec/fixtures/*
+!spec/fixtures/hiera
 pkg
 .bundle/
 .vagrant

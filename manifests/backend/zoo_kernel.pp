@@ -44,11 +44,24 @@ class ftep::backend::zoo_kernel(
         default  => $package_ensure,
       }
 
+      # This package requires the EPEL and elgis repositories
+      require ::epel
+
+      ensure_resource(yumrepo, 'elgis', {
+        ensure   => 'present',
+        descr    => 'EL GIS 6 - $basearch',
+        baseurl  => 'http://elgis.argeo.org/repos/6/elgis/$basearch',
+        enabled  => 1,
+        gpgcheck => 1,
+        gpgkey   => 'http://elgis.argeo.org/RPM-GPG-KEY-ELGIS',
+      })
+
       ensure_resource(package, 'zoo-kernel', {
         ensure  => $_package_ensure,
         name    => $package_name,
         # Tag for resource ordering
         tag     => 'ftep',
+        require => [Class['epel'], Yumrepo['elgis']],
       })
     }
 

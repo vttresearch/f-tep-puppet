@@ -5,3 +5,6 @@ fixtures:
     stdlib:
       repo: "puppetlabs/stdlib"
       ref: "4.13.1"
+    epel:
+      repo: "stahnma/epel"
+      ref: "1.2.2"
