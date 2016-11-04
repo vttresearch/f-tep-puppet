@@ -44,7 +44,8 @@ class ftep::backend::zoo_kernel(
         default  => $package_ensure,
       }
 
-      # This package requires the EPEL and elgis repositories
+      # The package F-TEP reference package requires dependencies from the EPEL
+      # and elgis repositories
       require ::epel
 
       ensure_resource(yumrepo, 'elgis', {

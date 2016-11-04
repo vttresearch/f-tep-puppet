@@ -11,6 +11,7 @@ class ftep::backend() {
 
   require ::ftep::globals
 
+  contain ::ftep::backend::java
   contain ::ftep::backend::zoo_kernel
 
 }

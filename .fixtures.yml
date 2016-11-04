@@ -8,3 +8,9 @@ fixtures:
     epel:
       repo: "stahnma/epel"
       ref: "1.2.2"
+    apache:
+      repo: "puppetlabs/apache"
+      ref: "1.10.0"
+    java:
+      repo: "puppetlabs/java"
+      ref: "1.6.0"

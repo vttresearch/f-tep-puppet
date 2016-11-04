@@ -6,7 +6,12 @@ require 'spec_helper'
 describe 'ftep::backend', :type => 'class' do
   it { should compile }
   it { should contain_class('ftep::backend') }
+  it { should contain_class('ftep::backend::java') }
   it { should contain_class('ftep::backend::zoo_kernel') }
+
+  # Java config
+  it { should contain_file('/etc/ld.so.conf.d/java.conf') }
+  it { should contain_exec('java_ldconfig').with_command('/sbin/ldconfig') }
 
   # Third-party yum repos for dependencies
   it { should contain_class('epel') }
