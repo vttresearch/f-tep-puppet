@@ -13,5 +13,6 @@ class ftep::backend() {
 
   contain ::ftep::backend::java
   contain ::ftep::backend::zoo_kernel
+  contain ::ftep::backend::apache
 
 }

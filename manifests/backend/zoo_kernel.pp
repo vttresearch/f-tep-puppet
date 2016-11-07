@@ -7,7 +7,7 @@ class ftep::backend::zoo_kernel(
   $manage_package    = true,
   $package_ensure    = 'present',
   $package_name      = 'zoo-kernel',
-  $config_path       = '/usr/lib/cgi-bin',
+  $config_path       = '/var/www/cgi-bin',
   $main_config_file  = 'main.cfg',
 
   # zoo-kernel config
