@@ -13,7 +13,7 @@ class ftep::backend::zoo_kernel(
   # zoo-kernel config
   $wps_version       = '1.0.0',
   $lang              = 'en-GB',
-  $server_address    = 'https://forestry-tep.eo.esa.int/zoo',
+  $server_address    = 'https://forestry-tep.eo.esa.int/wps',
   $data_path         = '/var/www/temp',
   $tmp_path          = '/data/cache',
   $tmp_url           = '../ftep-output',
@@ -60,9 +60,6 @@ class ftep::backend::zoo_kernel(
       ensure_resource(package, 'zoo-kernel', {
         ensure  => $_package_ensure,
         name    => $package_name,
-        # Tag for resource ordering
-        tag     => 'ftep',
-        require => [Class['epel'], Yumrepo['elgis']],
       })
     }
 

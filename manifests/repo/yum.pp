@@ -8,5 +8,6 @@ class ftep::repo::yum {
     gpgcheck => 0,
   })
 
-  Yumrepo['ftep'] -> Package<|tag == 'ftep'|>
+  # Ensure this (and all other) yumrepos are available before packages
+  Yumrepo <| |> -> Package <| provider != 'rpm' |>
 }

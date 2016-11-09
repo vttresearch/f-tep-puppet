@@ -7,4 +7,6 @@ class ftep::portal() {
 
   require ::ftep::globals
 
+  contain ::ftep::portal::webapp
+
 }
