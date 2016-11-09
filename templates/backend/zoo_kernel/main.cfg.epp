@@ -22,6 +22,7 @@
     Hash $ftep_config,
     Hash $other_config,
 | -%>
+# Managed by Puppet
 [headers]
 X-Powered-By=F-TEP
 

@@ -91,6 +91,7 @@ class ftep::backend::zoo_kernel(
         'ftep_config'    => $ftep_config,
         'other_config'   => $other_config,
       }),
+      require => Package['zoo-kernel'],
     }
   }
 
