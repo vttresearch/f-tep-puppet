@@ -1,0 +1,35 @@
+<%- |
+    String $logging_config_file,
+
+    Integer $server_port,
+    Integer $grpc_port,
+
+    String $ftep_server_grpc_host,
+    Integer $ftep_server_grpc_port,
+
+    String $cache_basedir,
+    Integer $cache_concurrency,
+    Integer $cache_maxweight,
+    String $jobs_basedir
+| -%>
+# Managed by Puppet
+# F-TEP Worker service configuration
+
+spring.application.name=F-TEP Worker
+
+logging.config=<%= $logging_config_file %>
+
+# Server config
+server.port=<%= $server_port %>
+grpc.port=<%= $grpc_port %>
+
+# F-TEP server RPC configuration
+ftep.worker.server.grpcHost=<%= $ftep_server_grpc_host %>
+ftep.worker.server.grpcPort=<%= $ftep_server_grpc_port %>
+
+# Worker configuration
+ftep.worker.cache.baseDir=<%= $cache_basedir %>
+ftep.worker.cache.concurrency=<%= $cache_concurrency %>
+ftep.worker.cache.maxWeight=<%= $cache_maxweight %>
+ftep.worker.jobEnv.baseDir=<%= $jobs_basedir %>
+
