@@ -1,4 +1,6 @@
 class ftep::zoomanager (
+  $component_name      = 'f-tep-zoomanager',
+
   $install_path        = '/var/f-tep/zoomanager',
   $config_file         = '/var/f-tep/zoomanager/f-tep-zoomanager.conf',
   $logging_config_file = '/var/f-tep/zoomanager/log4j2.xml',
@@ -12,7 +14,8 @@ class ftep::zoomanager (
   $grpc_port           = undef,
 
   $zcfg_path           = '/var/www/cgi-bin',
-  $services_stub_jar    = '/var/www/cgi-bin/jars/f-tep-services.jar',
+  $classpath_jar_files = [],
+  $services_stub_jar   = '/var/www/cgi-bin/jars/f-tep-services.jar',
 ) {
 
   require ::ftep::globals
@@ -23,6 +26,9 @@ class ftep::zoomanager (
 
   $real_application_port = pick($application_port, $ftep::globals::zoomanager_application_port)
   $real_grpc_port = pick($grpc_port, $ftep::globals::zoomanager_grpc_port)
+
+  # JDK is necessary to compile service stubs
+  ensure_packages(['java-1.8.0-openjdk-devel'])
 
   ensure_packages(['f-tep-zoomanager'], {
     ensure => 'latest',
@@ -35,14 +41,17 @@ class ftep::zoomanager (
     ensure  => 'present',
     owner   => $ftep::globals::user,
     group   => $ftep::globals::group,
-    content => 'JAVA_OPTS=-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector',
+    content => 'JAVA_HOME=/etc/alternatives/java_sdk
+JAVA_OPTS="-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"'
+    ,
     require => Package['f-tep-zoomanager'],
     notify  => Service['f-tep-zoomanager'],
   }
 
   ::ftep::logging::log4j2 { $logging_config_file:
-    require => Package['f-tep-zoomanager'],
-    notify  => Service['f-tep-zoomanager'],
+    ftep_component => $component_name,
+    require        => Package['f-tep-zoomanager'],
+    notify         => Service['f-tep-zoomanager'],
   }
 
   file { $properties_file:
@@ -54,6 +63,7 @@ class ftep::zoomanager (
       'server_port'         => $real_application_port,
       'grpc_port'           => $real_grpc_port,
       'zcfg_path'           => $zcfg_path,
+      'javac_classpath'     => join($classpath_jar_files, ':'),
       'services_stub_jar'   => $services_stub_jar,
     }),
     require => Package['f-tep-zoomanager'],
