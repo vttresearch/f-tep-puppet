@@ -9,18 +9,25 @@ class ftep::worker (
   $service_enable        = true,
   $service_ensure        = 'running',
 
-  # f-tep-worker.properties config
+  # f-tep-worker application.properties config
   $application_port      = undef,
   $grpc_port             = undef,
 
-  $ftep_server_grpc_host = undef,
-  $ftep_server_grpc_port = undef,
+  $serviceregistry_host  = undef,
+  $serviceregistry_port  = undef,
+
+  $worker_environment    = 'LOCAL',
 
   $cache_concurrency     = 4,
   $cache_maxweight       = 1024,
   $data_basedir          = '/data',
   $cache_dir             = 'dl',
   $jobs_dir              = 'jobs',
+
+  $ipt_auth_endpoint     = 'https://finder.eocloud.eu/resto/api/authidentity',
+  # These are not undef so they're not mandatory parameters, but must be set correctly if IPT downloads are required
+  $ipt_auth_domain       = '__secret__',
+  $ipt_download_base_url = '__secret__',
 ) {
 
   require ::ftep::globals
@@ -33,8 +40,9 @@ class ftep::worker (
 
   $real_application_port = pick($application_port, $ftep::globals::worker_application_port)
   $real_grpc_port = pick($grpc_port, $ftep::globals::worker_grpc_port)
-  $real_server_grpc_host = pick($ftep_server_grpc_host, $ftep::globals::server_hostname)
-  $real_server_grpc_port = pick($ftep_server_grpc_port, $ftep::globals::server_grpc_port)
+
+  $real_serviceregistry_host = pick($serviceregistry_host, $ftep::globals::server_hostname)
+  $real_serviceregistry_port = pick($serviceregistry_port, $ftep::globals::serviceregistry_application_port)
 
   ensure_packages(['f-tep-worker'], {
     ensure => 'latest',
@@ -77,12 +85,16 @@ class ftep::worker (
       'logging_config_file'   => $logging_config_file,
       'server_port'           => $real_application_port,
       'grpc_port'             => $real_grpc_port,
-      'ftep_server_grpc_host' => $real_server_grpc_host,
-      'ftep_server_grpc_port' => $real_server_grpc_port,
+      'serviceregistry_host'  => $real_serviceregistry_host,
+      'serviceregistry_port'  => $real_serviceregistry_port,
+      'worker_environment'    => $worker_environment,
       'cache_basedir'         => "${data_basedir}/$cache_dir",
       'cache_concurrency'     => $cache_concurrency,
       'cache_maxweight'       => $cache_maxweight,
       'jobs_basedir'          => "${data_basedir}/$jobs_dir",
+      'ipt_auth_endpoint'     => $ipt_auth_endpoint,
+      'ipt_auth_domain'       => $ipt_auth_domain,
+      'ipt_download_base_url' => $ipt_download_base_url,
     }),
     require => Package['f-tep-worker'],
     notify  => Service['f-tep-worker'],
