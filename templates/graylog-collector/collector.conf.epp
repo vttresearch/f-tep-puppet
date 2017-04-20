@@ -7,7 +7,6 @@
 | -%>
 
 server-url = "<%= $graylog_api_url %>"
-enable-registration = false
 collector-id = "file:/etc/graylog/collector/collector-id"
 
 inputs {
