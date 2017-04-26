@@ -1,5 +1,7 @@
 # Configure the gateway to the F-TEP services, reverse-proxying to nodes implementing the other classes
 class ftep::proxy (
+  $vhost_name             = 'ftep-proxy',
+
   $enable_ssl             = false,
   $enable_sso             = false,
 
@@ -160,7 +162,7 @@ class ftep::proxy (
       content => $tls_key,
     }
 
-    apache::vhost { 'ftep-proxy':
+    apache::vhost { $vhost_name:
       port            => '443',
       ssl             => true,
       ssl_cert        => $tls_cert_path,
@@ -174,7 +176,7 @@ class ftep::proxy (
       *               => $default_proxy_config
     }
   } else {
-    apache::vhost { 'ftep-proxy':
+    apache::vhost { $vhost_name:
       port          => '80',
       default_vhost => true,
       directories   => $directories,
