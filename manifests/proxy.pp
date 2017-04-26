@@ -114,7 +114,7 @@ class ftep::proxy (
         'shib_use_headers'      => 'On',
         'shib_request_settings' => { 'requireSession' => '1' },
         'custom_fragment'       => 'ShibCompatWith24 On',
-        'auth_require'          => 'shib-session',
+        'auth_require'          => 'valid-user',
       },
       {
         'provider'              => 'location',
@@ -123,7 +123,7 @@ class ftep::proxy (
         'shib_use_headers'      => 'On',
         'shib_request_settings' => { 'requireSession' => '1' },
         'custom_fragment'       => 'ShibCompatWith24 On',
-        'auth_require'          => 'shib-session',
+        'auth_require'          => 'valid-user',
       }
     ], $default_directories)
 
