@@ -16,7 +16,7 @@
 The ftep module lets you use Puppet to install and configure the Forestry TEP
 service infrastructure.
 
-[F-TEP](https://github.com/cgi-eoss/f-tep) is an open platform for the forestry
+[F-TEP](https://github.com/cgi-eoss/ftep) is an open platform for the forestry
 community to access and exploit EO data. This Puppet module may be used to
 set up the various components including the community hub, the F-TEP webapp,
 and the processing manager.
