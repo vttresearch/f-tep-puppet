@@ -40,7 +40,9 @@
     String $resto_output_products_collection,
     String $resto_output_products_model,
     String $resto_username,
-    String $resto_password
+    String $resto_password,
+
+    Hash $custom_properties
 | -%>
 # Managed by Puppet
 # F-TEP Server service configuration
@@ -55,6 +57,8 @@ server.compression.enabled=true
 server.compression.mime-types=text/html,text/xml,text/plain,text/css,application/json,application/hal+json
 
 grpc.port=<%= $grpc_port %>
+
+management.security.roles=ADMIN
 
 # Service registry configuration
 eureka.instance.statusPageUrlPath=${management.contextPath}/info
@@ -105,3 +109,8 @@ ftep.catalogue.resto.collection.outputProducts=<%= $resto_output_products_collec
 ftep.catalogue.resto.collection.outputProductsModel=<%= $resto_output_products_model %>
 ftep.catalogue.resto.username=<%= $resto_username %>
 ftep.catalogue.resto.password=<%= $resto_password %>
+
+# Custom manually-appended configuration properties
+<% $custom_properties.each | $key, $value | { %>
+<%= $key %>=<%= $value %>
+<% } -%>
