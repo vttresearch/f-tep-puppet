@@ -12,8 +12,6 @@ class ftep::drupal (
   $db_driver        = 'pgsql',
   $db_prefix        = 'drupal_',
 
-  $ftep_module_name = 'ftep-backend',
-
   $init_db          = true,
   $enable_cron      = true,
 ) {
@@ -36,11 +34,6 @@ class ftep::drupal (
     group  => 'root',
   }
 
-  package { 'f-tep-drupalmodules':
-    ensure => latest,
-    notify => Drupal::Site[$drupal_site],
-  }
-
   class { ::drupal:
     www_dir     => $www_path,
     www_process => $www_user,
@@ -57,14 +50,6 @@ class ftep::drupal (
       'registry_autoload' => '1.3',
       'shib_auth'         => '4.3',
       'views'             => '3.13',
-      'endpoint'          => { 'download' => {
-        'type' => 'copy',
-        'url'  => 'file:///opt/f-tep-drupalmodules/endpoint/',
-      } },
-      $ftep_module_name   => { 'download' => {
-        'type' => 'copy',
-        'url'  => 'file:///opt/f-tep-drupalmodules/ftep-backend/',
-      } }
     },
     settings_content => epp('ftep/drupal/settings.php.epp', {
       'db'         => {
@@ -82,7 +67,7 @@ class ftep::drupal (
       true    => 'present',
       default => 'absent'
     },
-    require          => [Package['f-tep-drupalmodules'], Class['::drupal']],
+    require          => [Class['::drupal']],
   }
 
   $site_path = "${www_path}/${drupal_site}"
