@@ -2,6 +2,12 @@
     String $logging_config_file,
 
     Integer $server_port,
+
+    Integer $management_port,
+    String $management_address,
+    String $management_context_path,
+    Boolean $management_security_enabled,
+
     String $serviceregistry_user,
     String $serviceregistry_pass,
 
@@ -16,12 +22,20 @@ logging.config=<%= $logging_config_file %>
 
 # Server config
 server.port=<%= $server_port %>
+
+management.address=<%= $management_address %>
+management.port=<%= $management_port %>
+management.contextPath=<%= $management_context_path %>
+management.security.enabled=<%= $management_security_enabled %>
+
 security.basic.enabled=true
 security.user.name=<%= $serviceregistry_user %>
 security.user.password=<%= $serviceregistry_pass %>
 
 eureka.client.register-with-eureka=false
 eureka.client.fetch-registry=false
+
+spring.metrics.servo.enabled=false
 
 logging.level.com.netflix.eureka=OFF
 logging.level.com.netflix.discovery=OFF

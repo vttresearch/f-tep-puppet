@@ -1,20 +1,28 @@
 class ftep::serviceregistry (
-  $component_name           = 'f-tep-serviceregistry',
+  $component_name              = 'f-tep-serviceregistry',
 
-  $install_path             = '/var/f-tep/serviceregistry',
-  $config_file              = '/var/f-tep/serviceregistry/f-tep-serviceregistry.conf',
-  $logging_config_file      = '/var/f-tep/serviceregistry/log4j2.xml',
-  $properties_file          = '/var/f-tep/serviceregistry/application.properties',
+  $install_path                = '/var/f-tep/serviceregistry',
+  $config_file                 = '/var/f-tep/serviceregistry/f-tep-serviceregistry.conf',
+  $logging_config_file         = '/var/f-tep/serviceregistry/log4j2.xml',
+  $properties_file             = '/var/f-tep/serviceregistry/application.properties',
 
-  $service_enable           = true,
-  $service_ensure           = 'running',
+  $service_enable              = true,
+  $service_ensure              = 'running',
+
+  $telegraf_enable             = true,
 
   # f-tep-serviceregistry application.properties config
-  $application_port         = undef,
-  $serviceregistry_user     = undef,
-  $serviceregistry_pass     = undef,
+  $application_port            = undef,
 
-  $custom_config_properties = { },
+  $management_port             = undef,
+  $management_address          = '127.0.0.1',
+  $management_context_path     = '/manage',
+  $management_security_enabled = false,
+
+  $serviceregistry_user        = undef,
+  $serviceregistry_pass        = undef,
+
+  $custom_config_properties    = {},
 ) {
 
   require ::ftep::globals
@@ -24,6 +32,8 @@ class ftep::serviceregistry (
   contain ::ftep::common::user
 
   $real_application_port = pick($application_port, $ftep::globals::serviceregistry_application_port)
+  $real_management_port = pick($management_port, $ftep::globals::serviceregistry_management_port)
+
   $real_serviceregistry_user = pick($serviceregistry_user, $ftep::globals::serviceregistry_user)
   $real_serviceregistry_pass = pick($serviceregistry_pass, $ftep::globals::serviceregistry_pass)
 
@@ -59,11 +69,15 @@ JAVA_OPTS="-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLogge
     owner   => $ftep::globals::user,
     group   => $ftep::globals::group,
     content => epp('ftep/serviceregistry/application.properties.epp', {
-      'logging_config_file'  => $logging_config_file,
-      'server_port'          => $real_application_port,
-      'serviceregistry_user' => $real_serviceregistry_user,
-      'serviceregistry_pass' => $real_serviceregistry_pass,
-      'custom_properties'    => $custom_config_properties,
+      'logging_config_file'         => $logging_config_file,
+      'server_port'                 => $real_application_port,
+      'management_port'             => $real_management_port,
+      'management_address'          => $management_address,
+      'management_context_path'     => $management_context_path,
+      'management_security_enabled' => $management_security_enabled,
+      'serviceregistry_user'        => $real_serviceregistry_user,
+      'serviceregistry_pass'        => $real_serviceregistry_pass,
+      'custom_properties'           => $custom_config_properties,
     }),
     require => Package['f-tep-serviceregistry'],
     notify  => Service['f-tep-serviceregistry'],
@@ -75,6 +89,13 @@ JAVA_OPTS="-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLogge
     hasrestart => true,
     hasstatus  => true,
     require    => [Package['f-tep-serviceregistry'], File[$properties_file]],
+  }
+
+  if $telegraf_enable {
+    ftep::monitor::telegraf_jolokia_input { $component_name:
+      management_context_path => $management_context_path,
+      management_port         => $real_management_port,
+    }
   }
 
 }

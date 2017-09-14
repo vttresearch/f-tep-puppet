@@ -1,29 +1,36 @@
 class ftep::zoomanager (
-  $component_name           = 'f-tep-zoomanager',
+  $component_name              = 'f-tep-zoomanager',
 
-  $install_path             = '/var/f-tep/zoomanager',
-  $config_file              = '/var/f-tep/zoomanager/f-tep-zoomanager.conf',
-  $logging_config_file      = '/var/f-tep/zoomanager/log4j2.xml',
-  $properties_file          = '/var/f-tep/zoomanager/application.properties',
+  $install_path                = '/var/f-tep/zoomanager',
+  $config_file                 = '/var/f-tep/zoomanager/f-tep-zoomanager.conf',
+  $logging_config_file         = '/var/f-tep/zoomanager/log4j2.xml',
+  $properties_file             = '/var/f-tep/zoomanager/application.properties',
 
-  $service_enable           = true,
-  $service_ensure           = 'running',
+  $service_enable              = true,
+  $service_ensure              = 'running',
+
+  $telegraf_enable             = true,
 
   # f-tep-zoomanager application.properties config
-  $application_port         = undef,
-  $grpc_port                = undef,
+  $application_port            = undef,
+  $grpc_port                   = undef,
 
-  $serviceregistry_user     = undef,
-  $serviceregistry_pass     = undef,
-  $serviceregistry_host     = undef,
-  $serviceregistry_port     = undef,
-  $serviceregistry_url      = undef,
+  $management_port             = undef,
+  $management_address          = '127.0.0.1',
+  $management_context_path     = '/manage',
+  $management_security_enabled = false,
 
-  $zcfg_path                = '/var/www/cgi-bin',
-  $classpath_jar_files      = [],
-  $services_stub_jar        = '/var/www/cgi-bin/jars/f-tep-services.jar',
+  $serviceregistry_user        = undef,
+  $serviceregistry_pass        = undef,
+  $serviceregistry_host        = undef,
+  $serviceregistry_port        = undef,
+  $serviceregistry_url         = undef,
 
-  $custom_config_properties = { },
+  $zcfg_path                   = '/var/www/cgi-bin',
+  $classpath_jar_files         = [],
+  $services_stub_jar           = '/var/www/cgi-bin/jars/f-tep-services.jar',
+
+  $custom_config_properties    = {},
 ) {
 
   require ::ftep::globals
@@ -34,6 +41,7 @@ class ftep::zoomanager (
 
   $real_application_port = pick($application_port, $ftep::globals::zoomanager_application_port)
   $real_grpc_port = pick($grpc_port, $ftep::globals::zoomanager_grpc_port)
+  $real_management_port = pick($management_port, $ftep::globals::zoomanager_management_port)
 
   $real_serviceregistry_user = pick($serviceregistry_user, $ftep::globals::serviceregistry_user)
   $real_serviceregistry_pass = pick($serviceregistry_pass, $ftep::globals::serviceregistry_pass)
@@ -76,14 +84,18 @@ JAVA_OPTS="-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLogge
     owner   => $ftep::globals::user,
     group   => $ftep::globals::group,
     content => epp('ftep/zoomanager/application.properties.epp', {
-      'logging_config_file' => $logging_config_file,
-      'server_port'         => $real_application_port,
-      'grpc_port'           => $real_grpc_port,
-      'serviceregistry_url' => $real_serviceregistry_url,
-      'zcfg_path'           => $zcfg_path,
-      'javac_classpath'     => join($classpath_jar_files, ':'),
-      'services_stub_jar'   => $services_stub_jar,
-      'custom_properties'   => $custom_config_properties,
+      'logging_config_file'         => $logging_config_file,
+      'server_port'                 => $real_application_port,
+      'grpc_port'                   => $real_grpc_port,
+      'management_port'             => $real_management_port,
+      'management_address'          => $management_address,
+      'management_context_path'     => $management_context_path,
+      'management_security_enabled' => $management_security_enabled,
+      'serviceregistry_url'         => $real_serviceregistry_url,
+      'zcfg_path'                   => $zcfg_path,
+      'javac_classpath'             => join($classpath_jar_files, ':'),
+      'services_stub_jar'           => $services_stub_jar,
+      'custom_properties'           => $custom_config_properties,
     }),
     require => Package['f-tep-zoomanager'],
     notify  => Service['f-tep-zoomanager'],
@@ -95,6 +107,13 @@ JAVA_OPTS="-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLogge
     hasrestart => true,
     hasstatus  => true,
     require    => [Package['f-tep-zoomanager'], File[$properties_file]],
+  }
+
+  if $telegraf_enable {
+    ftep::monitor::telegraf_jolokia_input { $component_name:
+      management_context_path => $management_context_path,
+      management_port         => $real_management_port,
+    }
   }
 
 }

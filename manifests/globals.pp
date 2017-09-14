@@ -31,7 +31,7 @@ class ftep::globals (
   $resto_hostname                   = 'ftep-resto',
   $default_gui_hostname             = 'ftep-worker',
 
-  $hosts_override                   = { },
+  $hosts_override                   = {},
 
   # All classes should share this database config, or override it if necessary
   $ftep_db_name                     = 'ftep',
@@ -57,11 +57,18 @@ class ftep::globals (
 
   # App server config for HTTP and gRPC
   $serviceregistry_application_port = 8761,
+  $serviceregistry_management_port  = 8161,
+
   $server_application_port          = 8090,
-  $worker_application_port          = 8091,
-  $zoomanager_application_port      = 8092,
+  $server_management_port           = 8190,
   $server_grpc_port                 = 6565,
+
+  $worker_application_port          = 8091,
+  $worker_management_port           = 8191,
   $worker_grpc_port                 = 6566,
+
+  $zoomanager_application_port      = 8092,
+  $zoomanager_management_port       = 8192,
   $zoomanager_grpc_port             = 6567,
 
   # Geoserver config

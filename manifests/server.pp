@@ -9,9 +9,16 @@ class ftep::server (
   $service_enable                     = true,
   $service_ensure                     = 'running',
 
+  $telegraf_enable                    = true,
+
   # f-tep-server.properties config
   $application_port                   = undef,
   $grpc_port                          = undef,
+
+  $management_port                    = undef,
+  $management_address                 = '127.0.0.1',
+  $management_context_path            = '/manage',
+  $management_security_enabled        = false,
 
   $serviceregistry_user               = undef,
   $serviceregistry_pass               = undef,
@@ -63,7 +70,7 @@ class ftep::server (
   $resto_username                     = undef,
   $resto_password                     = undef,
 
-  $custom_config_properties           = { },
+  $custom_config_properties           = {},
 ) {
 
   require ::ftep::globals
@@ -78,6 +85,7 @@ class ftep::server (
 
   $real_application_port = pick($application_port, $ftep::globals::server_application_port)
   $real_grpc_port = pick($grpc_port, $ftep::globals::server_grpc_port)
+  $real_management_port = pick($management_port, $ftep::globals::server_management_port)
 
   $real_serviceregistry_user = pick($serviceregistry_user, $ftep::globals::serviceregistry_user)
   $real_serviceregistry_pass = pick($serviceregistry_pass, $ftep::globals::serviceregistry_pass)
@@ -155,6 +163,10 @@ class ftep::server (
       'logging_config_file'                => $logging_config_file,
       'server_port'                        => $real_application_port,
       'grpc_port'                          => $real_grpc_port,
+      'management_port'                    => $real_management_port,
+      'management_address'                 => $management_address,
+      'management_context_path'            => $management_context_path,
+      'management_security_enabled'        => $management_security_enabled,
       'serviceregistry_url'                => $real_serviceregistry_url,
       'jdbc_driver'                        => $jdbc_driver,
       'jdbc_url'                           => $real_db_url,
@@ -204,6 +216,13 @@ class ftep::server (
     hasrestart => true,
     hasstatus  => true,
     require    => $service_requires,
+  }
+
+  if $telegraf_enable {
+    ftep::monitor::telegraf_jolokia_input { $component_name:
+      management_context_path => $management_context_path,
+      management_port         => $real_management_port,
+    }
   }
 
 }

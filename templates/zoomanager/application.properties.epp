@@ -4,6 +4,11 @@
     Integer $server_port,
     Integer $grpc_port,
 
+    Integer $management_port,
+    String $management_address,
+    String $management_context_path,
+    Boolean $management_security_enabled,
+
     String $serviceregistry_url,
 
     String $zcfg_path,
@@ -23,13 +28,20 @@ logging.config=<%= $logging_config_file %>
 server.port=<%= $server_port %>
 grpc.port=<%= $grpc_port %>
 
+management.address=<%= $management_address %>
+management.port=<%= $management_port %>
+management.contextPath=<%= $management_context_path %>
+management.security.enabled=<%= $management_security_enabled %>
+
 # Service registry configuration
-eureka.instance.statusPageUrlPath=${management.contextPath}/info
-eureka.instance.healthCheckUrlPath=${management.contextPath}/health
+eureka.instance.statusPageUrlPath=/info
+eureka.instance.healthCheckUrlPath=/health
 eureka.instance.metadataMap.grpcPort=${grpc.port}
 
 eureka.client.healthcheck.enabled=true
 eureka.client.serviceUrl.defaultZone=<%= $serviceregistry_url %>
+
+spring.metrics.servo.enabled=false
 
 # ZOO Manager configuration
 ftep.zoomanager.zcfg.path=<%= $zcfg_path %>

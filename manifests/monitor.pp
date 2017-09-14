@@ -1,12 +1,19 @@
-class ftep::monitor(){
+class ftep::monitor (
+  $enable_grafana  = true,
+  $enable_influxdb = true,
+  $enable_graylog  = true,
+) {
 
-  require ::ftep::globals
-  require ::epel
+  if $enable_grafana {
+    contain ::ftep::monitor::grafana
+  }
 
-  contain ::ftep::monitor::grafana
-  contain ::ftep::monitor::influxdb
-  contain ::ftep::monitor::telegraf
-  contain ::ftep::monitor::graylog_server
+  if $enable_influxdb {
+    contain ::ftep::monitor::influxdb
+  }
+
+  if $enable_graylog {
+    contain ::ftep::monitor::graylog_server
+  }
 
 }
-
