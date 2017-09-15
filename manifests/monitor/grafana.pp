@@ -7,6 +7,7 @@ class ftep::monitor::grafana (
   $grafana_version = '4.4.3',
 ) {
 
+  require ::ftep::globals
   require ::epel
 
   $real_port = pick($port, $ftep::globals::grafana_port)
