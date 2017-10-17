@@ -102,6 +102,7 @@ class ftep::wps (
     ::ftep::logging::log4j2 { $logging_config_file:
       ftep_component    => 'f-tep-zoolib',
       is_spring_context => false,
+      logrotate_enable  => false,
     }
     $default_java_config = {
       'log4j.configurationFile' => $logging_config_file,

@@ -150,9 +150,11 @@ class ftep::server (
   }
 
   ::ftep::logging::log4j2 { $logging_config_file:
-    ftep_component => $component_name,
-    require        => Package['f-tep-server'],
-    notify         => Service['f-tep-server'],
+    ftep_component        => $component_name,
+    logrotate_enable      => true,
+    logrotate_target_file => "/var/log/f-tep-server.log",
+    require               => Package['f-tep-server'],
+    notify                => Service['f-tep-server'],
   }
 
   file { $properties_file:

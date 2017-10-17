@@ -74,9 +74,11 @@ JAVA_OPTS="-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLogge
   }
 
   ::ftep::logging::log4j2 { $logging_config_file:
-    ftep_component => $component_name,
-    require        => Package['f-tep-zoomanager'],
-    notify         => Service['f-tep-zoomanager'],
+    ftep_component        => $component_name,
+    logrotate_enable      => true,
+    logrotate_target_file => "/var/log/f-tep-zoomanager.log",
+    require               => Package['f-tep-zoomanager'],
+    notify                => Service['f-tep-zoomanager'],
   }
 
   file { $properties_file:

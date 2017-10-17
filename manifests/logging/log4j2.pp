@@ -1,13 +1,16 @@
 define ftep::logging::log4j2 (
   String $ftep_component,
-  String $log_level               = 'info',
-  String $config_file             = $name,
-  Boolean $is_spring_context      = true,
-  Boolean $enable_graylog         = $ftep::globals::enable_log4j2_graylog,
-  String $graylog_server          = $ftep::globals::monitor_hostname,
-  String $graylog_protocol        = 'TCP',
-  Integer $graylog_port           = $ftep::globals::graylog_gelf_tcp_port,
-  String $graylog_source_hostname = $trusted['certname'],
+  String $log_level                       = 'info',
+  String $config_file                     = $name,
+  Boolean $is_spring_context              = true,
+  Boolean $enable_graylog                 = $ftep::globals::enable_log4j2_graylog,
+  String $graylog_server                  = $ftep::globals::monitor_hostname,
+  String $graylog_protocol                = 'TCP',
+  Integer $graylog_port                   = $ftep::globals::graylog_gelf_tcp_port,
+  String $graylog_source_hostname         = $trusted['certname'],
+
+  Boolean $logrotate_enable               = true,
+  Optional[String] $logrotate_target_file = undef,
 ) {
   file { $config_file:
     ensure  => 'present',
@@ -23,5 +26,15 @@ define ftep::logging::log4j2 (
       'graylog_port'            => $graylog_port,
       'graylog_source_hostname' => $graylog_source_hostname
     })
+  }
+
+  if $logrotate_enable {
+    ::logrotate::rule { "logrotate_${ftep_component}":
+      path         => $logrotate_target_file,
+      compress     => true,
+      copytruncate => true,
+      rotate       => 10,
+      size         => '10M'
+    }
   }
 }
