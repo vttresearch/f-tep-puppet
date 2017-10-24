@@ -21,6 +21,11 @@ class ftep::proxy (
   $tls_cert               = undef,
   $tls_chain              = undef,
   $tls_key                = undef,
+
+  $sp_cert_path           = '/etc/shibboleth/sp-cert.pem',
+  $sp_key_path            = '/etc/shibboleth/sp-key.pem',
+  $sp_cert                = undef,
+  $sp_key                 = undef,
 ) {
 
   require ::ftep::globals
@@ -29,6 +34,7 @@ class ftep::proxy (
 
   include ::apache::mod::headers
   include ::apache::mod::proxy
+  include ::apache::mod::rewrite
 
   $default_proxy_config = {
     docroot    => '/var/www/html',
@@ -37,9 +43,14 @@ class ftep::proxy (
     rewrites   => [
       {
         rewrite_rule => ['^/app$ /app/ [R]']
+      },
+      {
+        # default rewrite requested by ESA scan
+        rewrite_cond => ['%{REQUEST_METHOD} ^(TRACE|TRACK)'],
+        rewrite_rule => ['.* - [F]']
       }
     ]
-  }
+}
 
   $real_context_path_geoserver = pick($context_path_geoserver, $ftep::globals::context_path_geoserver)
   $real_context_path_resto = pick($context_path_resto, $ftep::globals::context_path_resto)
@@ -120,6 +131,23 @@ class ftep::proxy (
       fail("ftep::proxy requres \$tls_cert and \$tls_key to be set if \$enable_sso is true")
     }
     contain ::ftep::proxy::shibboleth
+
+     # add the SSO certificate (which may be different than the portal one)
+    file { $sp_cert_path:
+      ensure  => present,
+      mode    => '0644',
+      owner   => 'shibd',
+      group   => 'shibd',
+      content => $sp_cert,
+    }
+
+    file { $sp_key_path:
+      ensure  => present,
+      mode    => '0400',
+      owner   => 'shibd',
+      group   => 'shibd',
+      content => $sp_key,
+    }
 
     # Add the /Shibboleth.sso SP callback location, enable the minimal support for the root, and add secured paths
     $directories = concat([
