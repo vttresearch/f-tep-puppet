@@ -11,6 +11,8 @@ class ftep::zoomanager (
 
   $telegraf_enable             = true,
 
+  $java_opts                          = '',
+
   # f-tep-zoomanager application.properties config
   $application_port            = undef,
   $grpc_port                   = undef,
@@ -66,8 +68,8 @@ class ftep::zoomanager (
     ensure  => 'present',
     owner   => $ftep::globals::user,
     group   => $ftep::globals::group,
-    content => 'JAVA_HOME=/etc/alternatives/java_sdk
-JAVA_OPTS="-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager"'
+    content =>
+      "JAVA_OPTS=\"-DLog4jContextSelector=org.apache.logging.log4j.core.async.AsyncLoggerContextSelector -Djava.util.logging.manager=org.apache.logging.log4j.jul.LogManager ${java_opts}\""
     ,
     require => Package['f-tep-zoomanager'],
     notify  => Service['f-tep-zoomanager'],
