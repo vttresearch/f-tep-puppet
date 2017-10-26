@@ -7,10 +7,6 @@ class ftep::common::apache {
   ::apache::namevirtualhost { '*:80': }
 
   if $facts['selinux'] {
-    ::selinux::boolean { 'httpd_can_network_connect_db':
-      ensure => true,
-    }
-
     ::selinux::port { 'php-fpm':
       context  => 'http_port_t',
       port     => 9000,
