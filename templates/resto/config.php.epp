@@ -7,6 +7,7 @@
     Integer $db_port,
     String $db_username,
     String $db_password,
+    String $password_hashing
 | -%>
 <?php
 /*
@@ -217,7 +218,7 @@ return array(
          * Password encryption method (sha1 or bcrypt)
          * Note that bcrypt is only supported by PHP >= 5.5.0
          */
-        'hashing' => 'sha1',
+        'hashing' => '<%= password_hashing %>',
 
         /*
          * Database user with READ+WRITE privileges (see http://github.com/jjrom/resto/README.md)

@@ -1,16 +1,18 @@
 class ftep::resto (
-  $install_dir   = '/opt/resto',
-  $config_file   = 'include/config.php',
+  $install_dir      = '/opt/resto',
+  $config_file      = 'include/config.php',
 
-  $root_endpoint = '/resto',
+  $root_endpoint    = '/resto',
 
-  $db_driver     = 'PostgreSQL',
-  $db_name       = undef,
-  $db_schema     = 'resto',
-  $db_host       = undef,
-  $db_port       = 5432,
-  $db_user       = undef,
-  $db_pass       = undef,
+  $db_driver        = 'PostgreSQL',
+  $db_name          = undef,
+  $db_schema        = 'resto',
+  $db_host          = undef,
+  $db_port          = 5432,
+  $db_user          = undef,
+  $db_pass          = undef,
+
+  $password_hashing = 'sha1',
 ) {
 
   require ::ftep::globals
@@ -41,14 +43,15 @@ class ftep::resto (
     owner   => 'root',
     group   => 'root',
     content => epp('ftep/resto/config.php.epp', {
-      'root_endpoint'  => $root_endpoint,
-      'db_driver'      => $db_driver,
-      'db_name'        => $real_db_name,
-      'db_schema_name' => $db_schema,
-      'db_host'        => $real_db_host,
-      'db_port'        => $db_port,
-      'db_username'    => $real_db_user,
-      'db_password'    => $real_db_pass,
+      'root_endpoint'    => $root_endpoint,
+      'db_driver'        => $db_driver,
+      'db_name'          => $real_db_name,
+      'db_schema_name'   => $db_schema,
+      'db_host'          => $real_db_host,
+      'db_port'          => $db_port,
+      'db_username'      => $real_db_user,
+      'db_password'      => $real_db_pass,
+      'password_hashing' => $password_hashing
     }),
     require => Package['resto'],
   }
