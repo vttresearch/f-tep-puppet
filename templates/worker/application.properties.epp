@@ -13,14 +13,14 @@
 
     String $worker_environment,
 
+    String $jobs_basedir,
+
     String $cache_basedir,
     Integer $cache_concurrency,
     Integer $cache_maxweight,
-    String $jobs_basedir,
 
     String $ipt_auth_endpoint,
     String $ipt_auth_domain,
-    String $ipt_download_base_url,
 
     Hash $custom_properties
 | -%>
@@ -52,15 +52,16 @@ eureka.client.serviceUrl.defaultZone=<%= $serviceregistry_url %>
 spring.metrics.servo.enabled=false
 
 # Worker configuration
-ftep.worker.cache.baseDir=<%= $cache_basedir %>
-ftep.worker.cache.concurrency=<%= $cache_concurrency %>
-ftep.worker.cache.maxWeight=<%= $cache_maxweight %>
 ftep.worker.jobEnv.baseDir=<%= $jobs_basedir %>
 
+# Downloader cache configuration
+ftep.io.cache.baseDir=<%= $cache_basedir %>
+ftep.io.cache.concurrency=<%= $cache_concurrency %>
+ftep.io.cache.maxWeight=<%= $cache_maxweight %>
+
 # Downloader configuration
-ftep.worker.downloader.ipt.authEndpoint=<%= $ipt_auth_endpoint %>
-ftep.worker.downloader.ipt.authDomain=<%= $ipt_auth_domain %>
-ftep.worker.downloader.ipt.downloadBaseUrl=<%= $ipt_download_base_url %>
+ftep.io.downloader.ipt-http.authEndpoint=<%= $ipt_auth_endpoint %>
+ftep.io.downloader.ipt-http.authDomain=<%= $ipt_auth_domain %>
 
 # Custom manually-appended configuration properties
 <% $custom_properties.each | $key, $value | { %>
