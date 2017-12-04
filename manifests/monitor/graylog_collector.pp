@@ -4,6 +4,7 @@ class ftep::monitor::graylog_collector (
   $graylog_api_url         = undef,
   $graylog_server          = undef,
   $graylog_gelf_tcp_port   = undef,
+  $log_dir                 = '/var/log/graylog-collector',
 ) {
 
   require ::ftep::globals
@@ -32,12 +33,16 @@ class ftep::monitor::graylog_collector (
     notify  => Service['graylog-collector'],
   }
 
+  file { $log_dir:
+    ensure => directory
+  }
+
   service { 'graylog-collector':
     ensure => 'running',
     enable => true,
     hasrestart => true,
     hasstatus  => true,
-    require => [Package['graylog-collector'], File[$config_file]],
+    require => [Package['graylog-collector'], File[$config_file], File[$log_dir]],
   }
 
 }
