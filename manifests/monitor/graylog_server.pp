@@ -25,7 +25,6 @@ class ftep::monitor::graylog_server (
     }
 
   class { ::elasticsearch:
-    java_install => false,
     manage_repo  => true,
     repo_version => '2.x',
   } ->
@@ -37,7 +36,7 @@ class ftep::monitor::graylog_server (
     }
 
   class { ::graylog::repository:
-    version => '2.2'
+    version => '2.3'
   } ->
     class { ::graylog::server:
       config => {
