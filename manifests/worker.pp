@@ -64,10 +64,11 @@ class ftep::worker (
     "http://${serviceregistry_creds}@${serviceregistry_server}/eureka/")
 
   ensure_packages(['f-tep-worker'], {
-    ensure => 'latest',
-    name   => 'f-tep-worker',
-    tag    => 'ftep',
-    notify => Service['f-tep-worker'],
+    ensure  => 'latest',
+    name    => 'f-tep-worker',
+    tag     => 'ftep',
+    notify  => Service['f-tep-worker'],
+    require => Yumrepo['ftep'],
   })
 
   file { ["${ftep::common::datadir::data_basedir}/${cache_dir}", "${ftep::common::datadir::data_basedir}/${jobs_dir}"]:
@@ -92,8 +93,6 @@ class ftep::worker (
 
   ::ftep::logging::log4j2 { $logging_config_file:
     ftep_component        => $component_name,
-    logrotate_enable      => true,
-    logrotate_target_file => "/var/log/f-tep-worker.log",
     require               => Package['f-tep-worker'],
     notify                => Service['f-tep-worker'],
   }

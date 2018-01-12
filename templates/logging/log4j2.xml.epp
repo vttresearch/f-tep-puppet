@@ -1,14 +1,21 @@
 <%- |
-    String $ftep_component,
-    String $log_level,
+String $ftep_component,
+  String $log_level,
 
-    String $graylog_server,
-    String $graylog_protocol,
-    Integer $graylog_port,
-    String $graylog_source_hostname,
+  Boolean $is_spring_context,
 
-    Boolean $is_spring_context,
-    Boolean $enable_graylog
+  Boolean $enable_console,
+
+  Boolean $enable_file,
+  String $log_file,
+  String $log_file_pattern,
+  String $log_rollover_size,
+
+  Boolean $enable_graylog,
+  String $graylog_server,
+  String $graylog_protocol,
+  Integer $graylog_port,
+  String $graylog_source_hostname,
 | -%>
 <?xml version="1.0" encoding="UTF-8"?>
 <Configuration status="WARN" monitorInterval="30">
@@ -24,9 +31,20 @@
         <Property name="FTEP_COMPONENT"><%= $ftep_component %></Property>
     </Properties>
     <Appenders>
+<% if $enable_console { -%>
         <Console name="Console" target="SYSTEM_OUT" follow="true">
             <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}" />
         </Console>
+<% } -%>
+<% if $enable_file { -%>
+        <RollingFile name="RollingFile" fileName="<%= $log_file %>" filePattern="<%= $log_file_pattern %>">
+            <PatternLayout pattern="${sys:CONSOLE_LOG_PATTERN}" />
+            <Policies>
+                <SizeBasedTriggeringPolicy size="<%= $log_rollover_size %>"/>
+            </Policies>
+            <DefaultRolloverStrategy max="10"/>
+        </RollingFile>
+<% } -%>
 <% if $enable_graylog { -%>
         <GELF name="Graylog" server="<%= $graylog_server %>" protocol="<%= $graylog_protocol %>" port="<%= $graylog_port %>" hostName="<%= $graylog_source_hostname %>">
             <PatternLayout pattern="%msg"/>
@@ -42,7 +60,12 @@
         </Logger>
 <% } -%>
         <Root level="<%= $log_level %>">
+<% if $enable_console { -%>
             <AppenderRef ref="Console" />
+<% } -%>
+<% if $enable_file { -%>
+            <AppenderRef ref="RollingFile" />
+<% } -%>
 <% if $enable_graylog { -%>
             <AppenderRef ref="Graylog" />
 <% } -%>

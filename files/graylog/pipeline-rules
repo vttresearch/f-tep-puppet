@@ -1,0 +1,23 @@
+rule "httpd-access"
+when
+  has_field("type") && $message.type == "httpd-access"
+then
+  let matches = grok(pattern: "%{HTTPD_COMBINEDLOG}", value: to_string($message.message), only_named_captures: true);
+  set_fields(matches);
+end
+
+rule "httpd-error"
+when
+  has_field("type") && $message.type == "httpd-error"
+then
+  let matches = grok(pattern: "%{HTTPD_ERRORLOG}", value: to_string($message.message), only_named_captures: true);
+  set_fields(matches);
+end
+
+rule "syslog"
+when
+  has_field("type") && $message.type == "syslog"
+then
+  let matches = grok(pattern: "%{SYSLOGLINE}", value: to_string($message.message), only_named_captures: true);
+  set_fields(matches);
+end

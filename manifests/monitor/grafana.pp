@@ -4,7 +4,7 @@ class ftep::monitor::grafana (
   $db_password     = 'grafanapass',
   $context_path    = '/monitor',
   $port            = undef,
-  $grafana_version = '4.4.3',
+  $grafana_version = '4.6.2',
 ) {
 
   require ::ftep::globals

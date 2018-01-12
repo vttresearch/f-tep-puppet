@@ -7,7 +7,4 @@ class ftep::repo::ftep {
     enabled  => 1,
     gpgcheck => 0,
   })
-
-  # Ensure this (and all other) yumrepos are available before packages
-  Yumrepo <| |> -> Package <| provider != 'rpm' |>
 }

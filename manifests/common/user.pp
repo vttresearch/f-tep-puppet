@@ -4,21 +4,27 @@ class ftep::common::user (
   $home  = '/home/ftep'
 ) {
 
-  $uid = pick($user, $ftep::globals::user)
-  $gid = pick($group, $ftep::globals::group)
+  $real_user = pick($user, $ftep::globals::user)
+  $real_group = pick($group, $ftep::globals::group)
 
-  group { $gid:
+  group { $real_group:
     ensure => present,
   }
 
-  user { $uid:
+  user { $real_user:
     ensure     => present,
-    gid        => $gid,
+    gid        => $real_group,
     managehome => true,
     home       => $home,
     shell      => '/bin/bash',
     system     => true,
-    require    => Group[$gid],
+    require    => Group[$real_group],
+  }
+
+  file { $home:
+    ensure  => directory,
+    owner   => $real_user,
+    require => User[$real_user];
   }
 
 }

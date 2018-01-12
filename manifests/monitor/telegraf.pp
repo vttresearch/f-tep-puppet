@@ -33,7 +33,7 @@ class ftep::monitor::telegraf (
       }
     }
 
-    $default_inputs = ['mem', 'io', 'net', 'disk', 'swap', 'system']
+    $default_inputs = ['mem', 'io', 'net', 'disk', 'swap', 'system', 'processes']
     $default_inputs.each | String $input| {
       telegraf::input { $input: }
     }

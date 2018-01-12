@@ -44,7 +44,8 @@ class ftep::db::postgresql (
   # We have to control the package version
   class { ::postgresql::globals:
     manage_package_repo => true,
-    version             => '9.5',
+    version             => '10',
+    postgis_version     => '2.4',
   } ->
     class { ::postgresql::server:
       ipv4acls         => $acls,

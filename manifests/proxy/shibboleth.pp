@@ -66,6 +66,8 @@ class ftep::proxy::shibboleth (
   $idp_keyname                      = "defcreds",
 ) {
 
+  require ::ftep::repo::shibboleth
+
   # mod_shib with the upstream shibboleth package must use a custom path
   ::apache::mod { 'shib2':
     id      => 'mod_shib',
@@ -74,8 +76,9 @@ class ftep::proxy::shibboleth (
   }
 
   ensure_packages(['shibboleth'], {
-    ensure => latest,
-    tag    => 'ftep',
+    ensure  => latest,
+    tag     => 'shibboleth',
+    require => Yumrepo['shibboleth'],
   })
 
   ensure_resource(service, 'shibd', {

@@ -1,11 +1,14 @@
 class ftep::monitor::graylog_server (
-  $db_secret    = undef,
-  $db_sha256    = undef,
-  $db_bind_ip   = '127.0.0.1',
+  $db_secret            = undef,
+  $db_sha256            = undef,
+  $db_bind_ip           = '127.0.0.1',
 
-  $listen_host  = '0.0.0.0',
-  $listen_port  = undef,
-  $context_path = undef,
+  $listen_host          = '0.0.0.0',
+  $listen_port          = undef,
+  $context_path         = undef,
+
+  $graylog_repo_version = '2.4',
+  $graylog_version      = '2.4.1',
 ) {
 
   require ::epel
@@ -17,35 +20,38 @@ class ftep::monitor::graylog_server (
   $real_listen_port = pick($listen_port, $ftep::globals::graylog_port)
   $real_context_path = pick($context_path, $ftep::globals::graylog_context_path)
 
-  class { ::mongodb::globals:
+  class { 'mongodb::globals':
     manage_package_repo => true,
   } ->
-    class { ::mongodb::server:
-      bind_ip => [$db_bind_ip],
-    }
+  class { 'mongodb::server':
+    bind_ip => ['127.0.0.1'],
+  }
 
-  class { ::elasticsearch:
+  class { 'elasticsearch':
+    version      => '5.6.6',
+    repo_version => '5.x',
     manage_repo  => true,
-    repo_version => '2.x',
   } ->
-    ::elasticsearch::instance { 'graylog':
-      config => {
-        'cluster.name' => 'graylog',
-        'network.host' => $db_bind_ip,
-      }
+  elasticsearch::instance { 'graylog':
+    config => {
+      'cluster.name' => 'graylog',
+      'network.host' => $db_bind_ip,
     }
+  }
 
-  class { ::graylog::repository:
-    version => '2.3'
+  class { 'graylog::repository':
+    version => $graylog_repo_version
   } ->
-    class { ::graylog::server:
-      config => {
-        password_secret          => $real_db_secret, # Fill in your password secret
-        root_password_sha2       => $real_db_sha256, # Fill in your root password hash
-        web_listen_uri           => "http://${listen_host}:${real_listen_port}${real_context_path}/",
-        rest_listen_uri          => "http://${listen_host}:${real_listen_port}${real_context_path}/api/",
-        usage_statistics_enabled => false,
-      }
-    }
+  class { 'graylog::server':
+    package_version => $graylog_version,
+    config          => {
+      password_secret          => $real_db_secret, # Fill in your password secret
+      root_password_sha2       => $real_db_sha256, # Fill in your root password hash
+      web_listen_uri           => "http://${listen_host}:${real_listen_port}${real_context_path}/",
+      rest_listen_uri          => "http://${listen_host}:${real_listen_port}${real_context_path}/api/",
+      usage_statistics_enabled => false,
+    },
+    require         => [Yumrepo['graylog']],
+  }
 
 }
