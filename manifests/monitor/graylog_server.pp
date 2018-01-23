@@ -37,10 +37,11 @@ class ftep::monitor::graylog_server (
     }
 
   class { ::graylog::repository:
-    version => '2.3'
+    version => '2.4',
   } ->
     class { ::graylog::server:
-      config => {
+      package_version => '2.4.1',
+      config          => {
         password_secret          => $real_db_secret, # Fill in your password secret
         root_password_sha2       => $real_db_sha256, # Fill in your root password hash
         web_listen_uri           => "http://${listen_host}:${real_listen_port}${real_context_path}/",
