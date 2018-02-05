@@ -69,10 +69,10 @@ class ftep::proxy::shibboleth (
   require ::ftep::repo::shibboleth
 
   # mod_shib with the upstream shibboleth package must use a custom path
-  ::apache::mod { 'shib2':
-    id      => 'mod_shib',
-    path    => '/usr/lib64/shibboleth/mod_shib_22.so',
-    require => Package['shibboleth'],
+  class { ::apache::mod::shib:
+    suppress_warning => true,
+    mod_full_path    => '/usr/lib64/shibboleth/mod_shib_24.so',
+    require          => Package['shibboleth'],
   }
 
   ensure_packages(['shibboleth'], {
