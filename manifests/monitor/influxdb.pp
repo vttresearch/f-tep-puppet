@@ -11,8 +11,9 @@ class ftep::monitor::influxdb (
   $real_monitor_data_port = pick($monitor_data_port, $ftep::globals::monitor_data_port)
 
   class { 'influxdb::server':
-    http_bind_address => ":$real_monitor_data_port",
-    http_log_enabled  => false,
+    http_bind_address              => ":$real_monitor_data_port",
+    http_log_enabled               => false,
+    continuous_queries_log_enabled => false,
   }
 
 }
