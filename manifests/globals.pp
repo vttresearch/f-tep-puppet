@@ -95,7 +95,7 @@ class ftep::globals (
   $graylog_port                     = 8087,
   $graylog_context_path             = '/logs',
   $graylog_api_path                 = '/logs/api',
-  $graylog_gelf_tcp_port            = 12201,
+  $graylog_gelf_udp_port            = 12201,
   $graylog_api_ftep_username        = 'ftepgraylog',
   $graylog_api_ftep_password        = 'ftepgraylogpass',
 

@@ -13,8 +13,8 @@ define ftep::logging::log4j2 (
 
   Boolean $enable_graylog         = $ftep::globals::enable_log4j2_graylog,
   String $graylog_server          = $ftep::globals::monitor_hostname,
-  String $graylog_protocol        = 'TCP',
-  Integer $graylog_port           = $ftep::globals::graylog_gelf_tcp_port,
+  String $graylog_protocol        = 'UDP',
+  Integer $graylog_port           = $ftep::globals::graylog_gelf_udp_port,
   String $graylog_source_hostname = $trusted['certname'],
 ) {
 
