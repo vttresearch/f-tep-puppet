@@ -9,7 +9,7 @@ define ftep::logging::log4j2 (
   Boolean $enable_file            = true,
   String $log_dir                 = '/var/log/f-tep',
   String $log_file                = "${log_dir}/${ftep_component}.log",
-  String $log_file_pattern        = "${log_dir}//${ftep_component}-%d{yyyyMMdd}-%i.log.gz",
+  String $log_file_pattern        = "${log_dir}/${ftep_component}-%d{yyyyMMdd}-%i.log.gz",
 
   Boolean $enable_graylog         = $ftep::globals::enable_log4j2_graylog,
   String $graylog_server          = $ftep::globals::monitor_hostname,
