@@ -124,10 +124,11 @@ class ftep::server (
   $real_gui_url_pattern = pick($gui_url_pattern, "${ftep::globals::base_url}/gui/:__PORT__/")
 
   ensure_packages(['f-tep-server'], {
-    ensure => 'latest',
-    name   => 'f-tep-server',
-    tag    => 'ftep',
-    notify => Service['f-tep-server'],
+    ensure  => 'latest',
+    name    => 'f-tep-server',
+    tag     => 'ftep',
+    require => Yumrepo['ftep'],
+    notify  => Service['f-tep-server'],
   })
 
   file { ["${ftep::common::datadir::data_basedir}/${output_products_dir}", "${ftep::common::datadir::data_basedir}/${
@@ -153,8 +154,6 @@ class ftep::server (
 
   ::ftep::logging::log4j2 { $logging_config_file:
     ftep_component        => $component_name,
-    logrotate_enable      => true,
-    logrotate_target_file => "/var/log/f-tep-server.log",
     require               => Package['f-tep-server'],
     notify                => Service['f-tep-server'],
   }

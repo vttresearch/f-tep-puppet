@@ -6,6 +6,9 @@ class ftep::monitor::graylog_server (
   $listen_host  = '0.0.0.0',
   $listen_port  = undef,
   $context_path = undef,
+
+  $graylog_repo_version = '2.4',
+  $graylog_version      = '2.4.3',
 ) {
 
   require ::epel
@@ -20,16 +23,16 @@ class ftep::monitor::graylog_server (
   class { ::mongodb::globals:
     manage_package_repo => true,
   } ->
-    class { ::mongodb::server:
-      bind_ip => [$db_bind_ip],
-    }
+  class { ::mongodb::server:
+    bind_ip => [$db_bind_ip],
+  }
 
   class { ::elasticsearch:
-    manage_repo  => true,
-    repo_version => '5.x',
     version      => '5.6.6',
+    repo_version => '5.x',
+    manage_repo  => true,
   } ->
-    ::elasticsearch::instance { 'graylog':
+  ::elasticsearch::instance { 'graylog':
       config => {
         'cluster.name' => 'graylog',
         'network.host' => $db_bind_ip,
@@ -37,17 +40,18 @@ class ftep::monitor::graylog_server (
     }
 
   class { ::graylog::repository:
-    version => '2.4',
+    version => $graylog_repo_version
   } ->
-    class { ::graylog::server:
-      package_version => '2.4.1',
-      config          => {
-        password_secret          => $real_db_secret, # Fill in your password secret
-        root_password_sha2       => $real_db_sha256, # Fill in your root password hash
-        web_listen_uri           => "http://${listen_host}:${real_listen_port}${real_context_path}/",
-        rest_listen_uri          => "http://${listen_host}:${real_listen_port}${real_context_path}/api/",
-        usage_statistics_enabled => false,
-      }
-    }
+  class { ::graylog::server:
+    package_version => $graylog_version,
+    config          => {
+      password_secret          => $real_db_secret, # Fill in your password secret
+      root_password_sha2       => $real_db_sha256, # Fill in your root password hash
+      web_listen_uri           => "http://${listen_host}:${real_listen_port}${real_context_path}/",
+      rest_listen_uri          => "http://${listen_host}:${real_listen_port}${real_context_path}/api/",
+      usage_statistics_enabled => false,
+    },
+    require         => [Yumrepo['graylog']],
+  }
 
 }

@@ -14,9 +14,10 @@ class ftep::webapp (
   contain ::ftep::common::apache
 
   ensure_packages(['f-tep-portal'], {
-    ensure => 'latest',
-    name   => 'f-tep-portal',
-    tag    => 'ftep',
+    ensure  => 'latest',
+    name    => 'f-tep-portal',
+    tag     => 'ftep',
+    require => Yumrepo['ftep'],
   })
 
   $real_ftep_url = pick($ftep_url, $ftep::globals::base_url)

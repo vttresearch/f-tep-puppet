@@ -43,10 +43,11 @@ class ftep::serviceregistry (
   ensure_packages(['java-1.8.0-openjdk-devel'])
 
   ensure_packages(['f-tep-serviceregistry'], {
-    ensure => 'latest',
-    name   => 'f-tep-serviceregistry',
-    tag    => 'ftep',
-    notify => Service['f-tep-serviceregistry'],
+    ensure  => 'latest',
+    name    => 'f-tep-serviceregistry',
+    tag     => 'ftep',
+    notify  => Service['f-tep-serviceregistry'],
+    require => Yumrepo['ftep'],
   })
 
   file { $config_file:
@@ -62,8 +63,6 @@ class ftep::serviceregistry (
 
   ::ftep::logging::log4j2 { $logging_config_file:
     ftep_component        => $component_name,
-    logrotate_enable      => true,
-    logrotate_target_file => "/var/log/f-tep-serviceregistry.log",
     require               => Package['f-tep-serviceregistry'],
     notify                => Service['f-tep-serviceregistry'],
   }

@@ -3,11 +3,11 @@ class ftep::common::php {
   # Repo for updated PHP packages
   ensure_resource(yumrepo, 'webtatic', {
     ensure     => 'present',
-    descr      => 'Webtatic Repository EL6 - $basearch',
-    mirrorlist => 'https://mirror.webtatic.com/yum/el6/$basearch/mirrorlist',
+    descr      => 'Webtatic Repository EL7 - $basearch',
+    mirrorlist => 'https://mirror.webtatic.com/yum/el7/$basearch/mirrorlist',
     enabled    => 1,
     gpgcheck   => 1,
-    gpgkey     => 'https://mirror.webtatic.com/yum/RPM-GPG-KEY-webtatic-andy',
+    gpgkey     => 'https://mirror.webtatic.com/yum/RPM-GPG-KEY-webtatic-el7',
   })
 
   # PHP 5.6

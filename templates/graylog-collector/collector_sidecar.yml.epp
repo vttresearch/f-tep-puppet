@@ -1,0 +1,32 @@
+<%- |
+String $graylog_api_url,
+  Integer $update_interval,
+  String $node_id,
+  String $collector_id,
+  String $cache_path,
+  String $log_path,
+  Integer $log_rotation_time,
+  Integer $log_max_age,
+  Array $tags,
+  String $filebeat_configuration_path,
+| -%>
+server_url: <%= $graylog_api_url %>
+update_interval: <%= $update_interval %>
+tls_skip_verify: true
+send_status: true
+list_log_files:
+node_id: <%= $node_id %>
+collector_id: <%= $collector_id %>
+cache_path: <%= $cache_path %>
+log_path: <%= $log_path %>
+log_rotation_time: <%= $log_rotation_time %>
+log_max_age: <%= $log_max_age %>
+tags:
+<% $tags.each | $tag | { -%>
+  - <%= $tag %>
+<% } -%>
+backends:
+  - name: filebeat
+    enabled: true
+    binary_path: /usr/bin/filebeat
+    configuration_path: <%= $filebeat_configuration_path  %>

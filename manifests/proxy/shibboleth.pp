@@ -64,18 +64,22 @@ class ftep::proxy::shibboleth (
       'location' => 'https://eo-sso-idp.evo-pdgs.com:8110/idp/profile/SAML2/SOAP/AttributeQuery' },
   ],
   $idp_keyname                      = "defcreds",
+  $shibboleth2_xml_extra_content    = "",
 ) {
 
+  require ::ftep::repo::shibboleth
+
   # mod_shib with the upstream shibboleth package must use a custom path
-  ::apache::mod { 'shib2':
-    id      => 'mod_shib',
-    path    => '/usr/lib64/shibboleth/mod_shib_22.so',
-    require => Package['shibboleth'],
+  class { ::apache::mod::shib:
+    suppress_warning => true,
+    mod_full_path    => '/usr/lib64/shibboleth/mod_shib_24.so',
+    require          => Package['shibboleth'],
   }
 
   ensure_packages(['shibboleth'], {
-    ensure => latest,
-    tag    => 'ftep',
+    ensure  => latest,
+    tag     => 'shibboleth',
+    require => Yumrepo['shibboleth'],
   })
 
   ensure_resource(service, 'shibd', {
@@ -129,7 +133,8 @@ class ftep::proxy::shibboleth (
       'metadata_subdir'            => $metadata_subdir,
       'sp_key'                     => "${config_dir}/sp-key.key",
       'sp_cert'                    => "${config_dir}/sp-cert.crt",
-      'idp_keyname'                => $idp_keyname
+      'idp_keyname'                => $idp_keyname,
+      'extra_content'              => $shibboleth2_xml_extra_content,
     }),
     require => Package['shibboleth'],
     notify  => Service['shibd'],

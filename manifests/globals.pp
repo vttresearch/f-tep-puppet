@@ -33,6 +33,9 @@ class ftep::globals (
 
   $hosts_override                   = {},
 
+  # SSH authorized_keys contents
+  $ssh_authorized_keys              = {},
+
   # All classes should share this database config, or override it if necessary
   $ftep_db_name                     = 'ftep',
   $ftep_db_v2_name                  = 'ftep_v2',
@@ -92,7 +95,7 @@ class ftep::globals (
   $graylog_port                     = 8087,
   $graylog_context_path             = '/logs',
   $graylog_api_path                 = '/logs/api',
-  $graylog_gelf_tcp_port            = 12201,
+  $graylog_gelf_udp_port            = 12201,
   $graylog_api_ftep_username        = 'ftepgraylog',
   $graylog_api_ftep_password        = 'ftepgraylogpass',
 
@@ -101,6 +104,9 @@ class ftep::globals (
 
   # Alias reverse-proxy hosts via hosts file
   ensure_resources(host, $hosts_override)
+
+  # Manage keys globally
+  ensure_resources(ssh_authorized_key, $ssh_authorized_keys)
 
   # Setup of the repo only makes sense globally, so we are doing this here.
   if($manage_package_repo) {

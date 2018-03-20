@@ -134,7 +134,6 @@ class ftep::proxy (
         'auth_type'             => 'shibboleth',
         'shib_use_headers'      => 'On',
         'shib_request_settings' => { 'requireSession' => '0' },
-        'custom_fragment'       => 'ShibCompatWith24 On',
         'auth_require'          => 'shibboleth',
       },
       {
@@ -143,7 +142,6 @@ class ftep::proxy (
         'auth_type'             => 'shibboleth',
         'shib_use_headers'      => 'On',
         'shib_request_settings' => { 'requireSession' => '1' },
-        'custom_fragment'       => 'ShibCompatWith24 On',
         'auth_require'          => 'valid-user',
       },
       {
@@ -152,7 +150,6 @@ class ftep::proxy (
         'auth_type'             => 'shibboleth',
         'shib_use_headers'      => 'On',
         'shib_request_settings' => { 'requireSession' => '1' },
-        'custom_fragment'       => 'ShibCompatWith24 On',
         'auth_require'          => 'valid-user',
       }
     ], $default_directories)

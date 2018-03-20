@@ -58,10 +58,11 @@ class ftep::zoomanager (
   ensure_packages(['java-1.8.0-openjdk-devel'])
 
   ensure_packages(['f-tep-zoomanager'], {
-    ensure => 'latest',
-    name   => 'f-tep-zoomanager',
-    tag    => 'ftep',
-    notify => Service['f-tep-zoomanager'],
+    ensure  => 'latest',
+    name    => 'f-tep-zoomanager',
+    tag     => 'ftep',
+    notify  => Service['f-tep-zoomanager'],
+    require => Yumrepo['ftep'],
   })
 
   file { $config_file:
@@ -77,8 +78,6 @@ class ftep::zoomanager (
 
   ::ftep::logging::log4j2 { $logging_config_file:
     ftep_component        => $component_name,
-    logrotate_enable      => true,
-    logrotate_target_file => "/var/log/f-tep-zoomanager.log",
     require               => Package['f-tep-zoomanager'],
     notify                => Service['f-tep-zoomanager'],
   }

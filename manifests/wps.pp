@@ -54,7 +54,6 @@ class ftep::wps (
 
   # Extra repos
   require ::epel
-  require ::ftep::repo::elgis
 
   $real_db_host = pick($db_host, $::ftep::globals::db_hostname)
   $real_db_name = pick($db_name, $::ftep::globals::ftep_db_zoo_name)
@@ -79,9 +78,10 @@ class ftep::wps (
       }
 
       ensure_packages(['zoo-kernel'], {
-        ensure => $_package_ensure,
-        name   => $package_name,
-        tag    => 'ftep',
+        ensure  => $_package_ensure,
+        name    => $package_name,
+        tag     => 'ftep',
+        require => Yumrepo['ftep'],
       })
     }
 
@@ -102,7 +102,6 @@ class ftep::wps (
     ::ftep::logging::log4j2 { $logging_config_file:
       ftep_component    => 'f-tep-zoolib',
       is_spring_context => false,
-      logrotate_enable  => false,
     }
     $default_java_config = {
       'log4j.configurationFile' => $logging_config_file,
@@ -201,16 +200,14 @@ class ftep::wps (
       ensure => true
     }
     selinux::fcontext { 'data-path-rw-context':
-      context  => 'httpd_sys_rw_content_t',
-      pathname => "${data_basedir}/${data_path}"
+      seltype  => 'httpd_sys_rw_content_t',
+      pathspec => "${data_basedir}/${data_path}(/.*)?"
     }
     selinux::fcontext { 'tmp-path-rw-context':
-      context  => 'httpd_sys_rw_content_t',
-      pathname => "${data_basedir}/${tmp_path}"
+      seltype  => 'httpd_sys_rw_content_t',
+      pathspec => "${data_basedir}/${tmp_path}(/.*)?"
     }
-    selinux::module { 'ftep_wps':
-      ensure  => 'present',
-      content => "
+    $module_content = @("END")
 module ftep_wps 1.0;
 
 require {
@@ -228,7 +225,11 @@ allow httpd_sys_script_t port_t:tcp_socket name_connect;
 allow httpd_sys_script_t proc_net_t:file { read getattr open };
 allow httpd_sys_script_t sysctl_net_t:dir search;
 allow httpd_sys_script_t sysctl_net_t:file read;
-",
+|END
+    selinux::module { 'ftep_wps':
+      ensure     => 'present',
+      content_te => $module_content,
+      builder    => 'simple'
     }
   }
 

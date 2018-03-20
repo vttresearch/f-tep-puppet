@@ -25,9 +25,7 @@ class ftep::resto (
   include ::apache::mod::proxy_http
   include ::apache::mod::rewrite
   include ::apache::mod::proxy
-
-  # apache::mod::proxy_fcgi does not include the package on CentOS 6
-  ensure_resource('apache::mod', 'proxy_fcgi', { package => 'mod_proxy_fcgi', require => Class['apache::mod::proxy'] })
+  include ::apache::mod::proxy_fcgi
 
   ensure_packages(['resto'], {
     ensure => 'latest',
@@ -86,6 +84,13 @@ class ftep::resto (
         'url'  => "fcgi://127.0.0.1:9000${install_dir}/\$1"
       }
     ],
+  }
+
+  # Allow Resto to connect to postgres
+  if $facts['selinux'] {
+    ::selinux::boolean { 'httpd_can_network_connect_db':
+      ensure => true,
+    }
   }
 
 }
