@@ -64,6 +64,7 @@ class ftep::proxy::shibboleth (
       'location' => 'https://eo-sso-idp.evo-pdgs.com:8110/idp/profile/SAML2/SOAP/AttributeQuery' },
   ],
   $idp_keyname                      = "defcreds",
+  $shibboleth2_xml_extra_content    = "",
 ) {
 
   require ::ftep::repo::shibboleth
@@ -132,7 +133,8 @@ class ftep::proxy::shibboleth (
       'metadata_subdir'            => $metadata_subdir,
       'sp_key'                     => "${config_dir}/sp-key.key",
       'sp_cert'                    => "${config_dir}/sp-cert.crt",
-      'idp_keyname'                => $idp_keyname
+      'idp_keyname'                => $idp_keyname,
+      'extra_content'              => $shibboleth2_xml_extra_content,
     }),
     require => Package['shibboleth'],
     notify  => Service['shibd'],

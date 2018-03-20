@@ -16,6 +16,7 @@
   String $sp_key,
   String $sp_cert,
   String $idp_keyname,
+  String $extra_content,
 | -%>
 <?xml version="1.0" encoding="UTF-8"?>
 <SPConfig xmlns="urn:mace:shibboleth:2.0:native:sp:config"
@@ -65,5 +66,7 @@
     <SecurityPolicyProvider type="XML" validate="true" path="security-policy.xml"/>
 
     <ProtocolProvider type="XML" validate="true" reloadChanges="false" path="protocols.xml"/>
+
+    <%= $extra_content %>
 
 </SPConfig>
