@@ -31,4 +31,10 @@ class ftep::drupal::apache(
     ]
   }
 
+  if $facts['selinux'] {
+    ::selinux::boolean { 'httpd_can_network_connect':
+      ensure => true,
+    }
+  }
+
 }
