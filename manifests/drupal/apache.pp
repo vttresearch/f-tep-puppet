@@ -1,4 +1,4 @@
-class ftep::drupal::apache(
+class ftep::drupal::apache (
   $site_path
 ) {
 
@@ -32,9 +32,7 @@ class ftep::drupal::apache(
   }
 
   if $facts['selinux'] {
-    ::selinux::boolean { 'httpd_can_network_connect':
-      ensure => true,
-    }
+    ensure_resource(::selinux::boolean, 'httpd_can_network_connect_db', { ensure => true })
   }
 
 }
