@@ -1,6 +1,7 @@
 # Configure the gateway to the F-TEP services, reverse-proxying to nodes implementing the other classes
 class ftep::proxy (
   $vhost_name             = 'ftep-proxy',
+  $vhost_aliases          = [],
 
   $enable_ssl             = false,
   $enable_sso             = false,
@@ -204,6 +205,7 @@ class ftep::proxy (
 
     apache::vhost { "redirect ${vhost_name} non-ssl":
       servername      => $vhost_name,
+      serveraliases   => $vhost_aliases,
       port            => '80',
       docroot         => '/var/www/redirect',
       redirect_status => 'permanent',
@@ -211,6 +213,7 @@ class ftep::proxy (
     }
     apache::vhost { $vhost_name:
       servername       => $vhost_name,
+      serveraliases    => $vhost_aliases,
       port             => '443',
       ssl              => true,
       ssl_cert         => $tls_cert_path,
@@ -227,6 +230,8 @@ class ftep::proxy (
     }
   } else {
     apache::vhost { $vhost_name:
+      servername       => $vhost_name,
+      serveraliases    => $vhost_aliases,
       port             => '80',
       default_vhost    => true,
       directories      => $directories,
