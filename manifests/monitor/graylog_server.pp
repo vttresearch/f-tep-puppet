@@ -7,6 +7,9 @@ class ftep::monitor::graylog_server (
   $listen_port  = undef,
   $context_path = undef,
 
+  $elasticsearch_repo_version = '5.x',
+  $elasticsearch_version = '5.6.13',
+
   $graylog_repo_version = '2.4',
   $graylog_version      = '2.4.3',
 ) {
@@ -28,8 +31,8 @@ class ftep::monitor::graylog_server (
   }
 
   class { ::elasticsearch:
-    version      => '5.6.6',
-    repo_version => '5.x',
+    repo_version => $elasticsearch_repo_version,
+    version      => $elasticsearch_version,
     manage_repo  => true,
   } ->
   ::elasticsearch::instance { 'graylog':

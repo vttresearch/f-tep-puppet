@@ -1,7 +1,7 @@
 # Configure the gateway to the F-TEP services, reverse-proxying to nodes implementing the other classes
 class ftep::proxy (
   $vhost_name             = 'ftep-proxy',
-  $vhost_aliases          = [],
+  $vhost_aliases          = {},
 
   $enable_ssl             = false,
   $enable_sso             = false,
@@ -169,6 +169,16 @@ class ftep::proxy (
     $proxy_pass_match = $default_proxy_pass_match
   }
 
+  $vhost_aliases.each | String $alias, Hash $tls_vars | {
+    apache::vhost { "redirect ${alias} non-ssl":
+      servername      => $alias,
+      port            => '80',
+      docroot         => '/var/www/redirect',
+      redirect_status => 'permanent',
+      redirect_dest   => "http://${vhost_name}/"
+    }
+  }
+
   if $enable_ssl {
     unless ($tls_cert and $tls_key) {
       fail("ftep::proxy requres \$tls_cert and \$tls_key to be set if \$enable_ssl is true")
@@ -203,9 +213,21 @@ class ftep::proxy (
       content => $tls_key,
     }
 
+    $vhost_aliases.each | String $alias, Hash $tls_vars | {
+      apache::vhost { "redirect ${alias} ssl":
+        servername      => $alias,
+        port            => '443',
+        docroot         => '/var/www/redirect',
+        redirect_status => 'permanent',
+        redirect_dest   => "https://${vhost_name}/",
+        ssl             => true,
+        ssl_cert        => pick($tls_vars["tls_cert_path"], $tls_cert_path),
+        ssl_chain       => pick($tls_vars["tls_cert_chain_path"], $real_tls_chain_path),
+        ssl_key         => pick($tls_vars["tls_key_path"], $tls_key_path),
+      }
+    }
     apache::vhost { "redirect ${vhost_name} non-ssl":
       servername      => $vhost_name,
-      serveraliases   => $vhost_aliases,
       port            => '80',
       docroot         => '/var/www/redirect',
       redirect_status => 'permanent',
@@ -213,7 +235,6 @@ class ftep::proxy (
     }
     apache::vhost { $vhost_name:
       servername       => $vhost_name,
-      serveraliases    => $vhost_aliases,
       port             => '443',
       ssl              => true,
       ssl_cert         => $tls_cert_path,
@@ -231,7 +252,6 @@ class ftep::proxy (
   } else {
     apache::vhost { $vhost_name:
       servername       => $vhost_name,
-      serveraliases    => $vhost_aliases,
       port             => '80',
       default_vhost    => true,
       directories      => $directories,
