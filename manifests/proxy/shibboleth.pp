@@ -12,7 +12,7 @@ class ftep::proxy::shibboleth (
   $app_defaults_signing             = 'false',
   $app_defaults_encryption          = 'false',
   $app_defaults_remote_user         = 'Eosso-Person-commonName',
-  $app_defaults_extra_attrs         = { },
+  $app_defaults_extra_attrs         = {},
   $session_lifetime                 = 7200,
   $session_timeout                  = 3600,
   $session_check_address            = false,
@@ -20,6 +20,8 @@ class ftep::proxy::shibboleth (
   $support_contact                  = 'eo-gpod@esa.int',
   $idp_id                           = 'https://eo-sso-idp.evo-pdgs.com:443/shibboleth',
   $idp_scope                        = 'evo-pdgs.com',
+  $sp_cert                          = undef,
+  $sp_key                           = undef,
   $sp_assertion_consumer_services   = [
     { 'binding'  => 'urn:oasis:names:tc:SAML:2.0:bindings:HTTP-Artifact',
       'location' => 'https://forestry-tep.eo.esa.int/Shibboleth.sso/SAML2/Artifact' },
@@ -96,7 +98,7 @@ class ftep::proxy::shibboleth (
     mode    => '0644',
     owner   => 'shibd',
     group   => 'shibd',
-    content => $ftep::proxy::tls_cert,
+    content => pick($sp_cert, $ftep::proxy::tls_cert),
     require => Package['shibboleth'],
     notify  => Service['shibd'],
   }
@@ -106,7 +108,7 @@ class ftep::proxy::shibboleth (
     mode    => '0600',
     owner   => 'shibd',
     group   => 'shibd',
-    content => $ftep::proxy::tls_key,
+    content => pick($sp_key, $ftep::proxy::tls_key),
     require => Package['shibboleth'],
     notify  => Service['shibd'],
   }
@@ -145,7 +147,7 @@ class ftep::proxy::shibboleth (
     mode    => '0644',
     owner   => 'root',
     group   => 'root',
-    content => epp('ftep/proxy/shibboleth/attribute-policy.xml.epp', { }),
+    content => epp('ftep/proxy/shibboleth/attribute-policy.xml.epp', {}),
     require => Package['shibboleth'],
   }
 
