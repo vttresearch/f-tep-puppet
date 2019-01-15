@@ -72,6 +72,10 @@ class ftep::server (
   $resto_username                     = undef,
   $resto_password                     = undef,
 
+  $broker_url                         = undef,
+  $broker_username                    = undef,
+  $broker_password                    = undef,
+
   $custom_config_properties           = {},
 ) {
 
@@ -116,6 +120,10 @@ class ftep::server (
   $real_resto_url = pick($resto_url, "${ftep::globals::base_url}${ftep::globals::context_path_resto}/")
   $real_resto_username = pick($resto_username, $ftep::globals::resto_ftep_username)
   $real_resto_password = pick($resto_username, $ftep::globals::resto_ftep_password)
+
+  $real_broker_url= pick($broker_url, "${ftep::globals::base_url}${ftep::globals::context_path_broker}/")
+  $real_broker_username = pick($broker_username, $ftep::globals::broker_ftep_username)
+  $real_broker_password = pick($broker_password, $ftep::globals::broker_ftep_password)
 
   $real_graylog_api_url = pick($graylog_api_url, "${ftep::globals::base_url}${ftep::globals::graylog_api_path}")
   $real_graylog_api_username = pick($graylog_api_username, $ftep::globals::graylog_api_ftep_username)
@@ -201,6 +209,9 @@ class ftep::server (
       'resto_output_products_model'        => $resto_output_products_model,
       'resto_username'                     => $real_resto_username,
       'resto_password'                     => $real_resto_password,
+      'broker_url'                         => $real_broker_url,
+      'broker_username'                    => $real_broker_username,
+      'broker_password'                    => $real_broker_password,
       'custom_properties'                  => $custom_config_properties,
     }),
     require => Package['f-tep-server'],

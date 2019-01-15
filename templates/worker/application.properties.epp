@@ -22,6 +22,10 @@
     String $ipt_auth_endpoint,
     String $ipt_auth_domain,
 
+    String $broker_url,
+    String $broker_username,
+    String $broker_password,
+
     Hash $custom_properties
 | -%>
 # Managed by Puppet
@@ -43,7 +47,7 @@ management.security.enabled=<%= $management_security_enabled %>
 # Service registry configuration
 eureka.instance.statusPageUrlPath=/info
 eureka.instance.healthCheckUrlPath=/health
-eureka.instance.metadataMap.workerEnv=<%= $worker_environment %>
+eureka.instance.metadataMap.workerId=<%= $worker_environment %>
 eureka.instance.metadataMap.grpcPort=${grpc.port}
 
 eureka.client.healthcheck.enabled=true
@@ -62,6 +66,11 @@ ftep.io.cache.maxWeight=<%= $cache_maxweight %>
 # Downloader configuration
 ftep.io.downloader.ipt-http.authEndpoint=<%= $ipt_auth_endpoint %>
 ftep.io.downloader.ipt-http.authDomain=<%= $ipt_auth_domain %>
+
+# Broker configuration
+spring.activemq.broker-url=<%= $broker_url %>
+spring.activemq.user=<%= $broker_username %>
+spring.activemq.password=<%= $broker_password %>
 
 # Custom manually-appended configuration properties
 <% $custom_properties.each | $key, $value | { %>

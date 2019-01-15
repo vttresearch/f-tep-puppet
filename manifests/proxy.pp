@@ -15,6 +15,7 @@ class ftep::proxy (
   $context_path_logs      = undef,
   $context_path_eureka    = undef,
   $context_path_gui       = undef,
+  $context_path_broker    = undef,
 
   $tls_cert_path          = '/etc/pki/tls/certs/ftep_portal.crt',
   $tls_chain_path         = '/etc/pki/tls/certs/ftep_portal.chain.crt',
@@ -50,6 +51,7 @@ class ftep::proxy (
   $real_context_path_monitor = pick($context_path_monitor, $ftep::globals::context_path_monitor)
   $real_context_path_logs = pick($context_path_logs, $ftep::globals::context_path_logs)
   $real_context_path_eureka = pick($context_path_eureka, $ftep::globals::context_path_eureka)
+  $real_context_path_broker = pick($context_path_broker, $ftep::globals::context_path_broker)
 
   # Directory/Location directives - cannot be an empty array...
   $default_directories = [
@@ -104,6 +106,11 @@ class ftep::proxy (
     {
       'path'   => $real_context_path_eureka,
       'url'    => "http://${ftep::globals::server_hostname}:${ftep::globals::serviceregistry_application_port}/eureka",
+      'params' => { 'retry' => '0' }
+    },
+    {
+      'path'   => $real_context_path_broker,
+      'url'    => "http://${ftep::globals::broker_hostname}",
       'params' => { 'retry' => '0' }
     }
   ]
