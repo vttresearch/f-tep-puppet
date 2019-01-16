@@ -24,6 +24,11 @@ class ftep::broker (
     service_autorestart  => false,
   }
 
+  # Make sure the activemq binary is executable
+  file { "/opt/apache-activemq-${activemq_version}/bin/activemq":
+    mode => '0755'
+  }
+
   $service_unit_content = "[Unit]
 Description=Apache ActiveMQ
 After=network-online.target
@@ -52,7 +57,7 @@ WantedBy=multi-user.target
     enable     => $service_enable,
     hasrestart => true,
     hasstatus  => true,
-    require    => [File["/usr/lib/systemd/system/${service_name}.service"]],
+    require    => [File["/opt/apache-activemq-${activemq_version}/bin/activemq"], File["/usr/lib/systemd/system/${service_name}.service"]],
   }
 
 }
