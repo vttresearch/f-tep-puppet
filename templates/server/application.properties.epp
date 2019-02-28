@@ -7,7 +7,6 @@
     Integer $management_port,
     String $management_address,
     String $management_context_path,
-    Boolean $management_security_enabled,
 
     String $serviceregistry_url,
 
@@ -68,10 +67,9 @@ server.compression.mime-types=text/html,text/xml,text/plain,text/css,application
 
 grpc.port=<%= $grpc_port %>
 
-management.address=<%= $management_address %>
-management.port=<%= $management_port %>
-management.contextPath=<%= $management_context_path %>
-management.security.enabled=<%= $management_security_enabled %>
+management.server.address=<%= $management_address %>
+management.server.port=<%= $management_port %>
+management.server.servlet.context-path=<%= $management_context_path %>
 
 # Service registry configuration
 eureka.instance.statusPageUrlPath=/info
@@ -89,8 +87,8 @@ spring.datasource.username=<%= $jdbc_user %>
 spring.datasource.password=<%= $jdbc_password %>
 spring.datasource.driver-class-name=<%= $jdbc_driver %>
 
-flyway.enabled=true
-flyway.locations=db/migration/{vendor}
+spring.flyway.enabled=true
+spring.flyway.locations=classpath:db/migration/{vendor}
 spring.jpa.hibernate.ddl-auto=validate
 
 # API configuration

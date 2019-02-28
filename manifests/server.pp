@@ -20,7 +20,6 @@ class ftep::server (
   $management_port                    = undef,
   $management_address                 = '127.0.0.1',
   $management_context_path            = '/manage',
-  $management_security_enabled        = false,
 
   $serviceregistry_user               = undef,
   $serviceregistry_pass               = undef,
@@ -177,7 +176,6 @@ class ftep::server (
       'management_port'                    => $real_management_port,
       'management_address'                 => $management_address,
       'management_context_path'            => $management_context_path,
-      'management_security_enabled'        => $management_security_enabled,
       'serviceregistry_url'                => $real_serviceregistry_url,
       'jdbc_driver'                        => $jdbc_driver,
       'jdbc_url'                           => $real_db_url,
