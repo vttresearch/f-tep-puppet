@@ -20,13 +20,16 @@ class ftep::worker (
   $management_port             = undef,
   $management_address          = '127.0.0.1',
   $management_context_path     = '/manage',
-  $management_security_enabled = false,
 
   $serviceregistry_user        = undef,
   $serviceregistry_pass        = undef,
   $serviceregistry_host        = undef,
   $serviceregistry_port        = undef,
   $serviceregistry_url         = undef,
+
+  $broker_url                  = undef,
+  $broker_username             = undef,
+  $broker_password             = undef,
 
   $worker_environment          = 'LOCAL',
 
@@ -62,6 +65,10 @@ class ftep::worker (
   $serviceregistry_server = "${real_serviceregistry_host}:${real_serviceregistry_port}"
   $real_serviceregistry_url = pick($serviceregistry_url,
     "http://${serviceregistry_creds}@${serviceregistry_server}/eureka/")
+
+  $real_broker_url= pick($broker_url, "${ftep::globals::base_url}${ftep::globals::context_path_broker}/")
+  $real_broker_username = pick($broker_username, $ftep::globals::broker_ftep_username)
+  $real_broker_password = pick($broker_password, $ftep::globals::broker_ftep_password)
 
   ensure_packages(['f-tep-worker'], {
     ensure  => 'latest',
@@ -108,7 +115,6 @@ class ftep::worker (
       'management_port'             => $real_management_port,
       'management_address'          => $management_address,
       'management_context_path'     => $management_context_path,
-      'management_security_enabled' => $management_security_enabled,
       'serviceregistry_url'         => $real_serviceregistry_url,
       'worker_environment'          => $worker_environment,
       'jobs_basedir'                => "${ftep::common::datadir::data_basedir}/${jobs_dir}",
@@ -117,6 +123,9 @@ class ftep::worker (
       'cache_maxweight'             => $cache_maxweight,
       'ipt_auth_endpoint'           => $ipt_auth_endpoint,
       'ipt_auth_domain'             => $ipt_auth_domain,
+      'broker_url'                  => $real_broker_url,
+      'broker_username'             => $real_broker_username,
+      'broker_password'             => $real_broker_password,
       'custom_properties'           => $custom_config_properties,
     }),
     require => Package['f-tep-worker'],

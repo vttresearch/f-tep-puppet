@@ -39,6 +39,7 @@ and the processing manager.
 
 The ftep module may be used to install the F-TEP components individually by the
 classes:
+* `ftep::broker`
 * `ftep::db`
 * `ftep::drupal`
 * `ftep::geoserver`

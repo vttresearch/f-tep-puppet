@@ -14,6 +14,7 @@ class ftep::globals (
   $context_path_monitor             = '/monitor',
   $context_path_logs                = '/logs',
   $context_path_eureka              = '/eureka',
+  $context_path_broker              = '/broker',
 
   # System user
   $user                             = 'ftep',
@@ -29,6 +30,7 @@ class ftep::globals (
   $server_hostname                  = 'ftep-server',
   $monitor_hostname                 = 'ftep-monitor',
   $resto_hostname                   = 'ftep-resto',
+  $broker_hostname                  = 'ftep-broker',
   $default_gui_hostname             = 'ftep-worker',
 
   $hosts_override                   = {},
@@ -83,6 +85,10 @@ class ftep::globals (
   # Resto config
   $resto_ftep_username              = 'ftepresto',
   $resto_ftep_password              = 'fteprestopass',
+
+  # Broker config
+  $broker_ftep_username             = 'ftepbroker',
+  $broker_ftep_password             = 'ftepbrokerpass',
 
   # monitor config
   $grafana_port                     = 8089,

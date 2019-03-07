@@ -6,7 +6,6 @@
     Integer $management_port,
     String $management_address,
     String $management_context_path,
-    Boolean $management_security_enabled,
 
     String $serviceregistry_user,
     String $serviceregistry_pass,
@@ -23,14 +22,12 @@ logging.config=<%= $logging_config_file %>
 # Server config
 server.port=<%= $server_port %>
 
-management.address=<%= $management_address %>
-management.port=<%= $management_port %>
-management.contextPath=<%= $management_context_path %>
-management.security.enabled=<%= $management_security_enabled %>
+management.server.address=<%= $management_address %>
+management.server.port=<%= $management_port %>
+management.server.servlet.context-path=<%= $management_context_path %>
 
-security.basic.enabled=true
-security.user.name=<%= $serviceregistry_user %>
-security.user.password=<%= $serviceregistry_pass %>
+spring.security.user.name=<%= $serviceregistry_user %>
+spring.security.user.password=<%= $serviceregistry_pass %>
 
 eureka.client.register-with-eureka=false
 eureka.client.fetch-registry=false

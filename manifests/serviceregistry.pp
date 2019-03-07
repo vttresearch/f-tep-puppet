@@ -19,7 +19,6 @@ class ftep::serviceregistry (
   $management_port             = undef,
   $management_address          = '127.0.0.1',
   $management_context_path     = '/manage',
-  $management_security_enabled = false,
 
   $serviceregistry_user        = undef,
   $serviceregistry_pass        = undef,
@@ -77,7 +76,6 @@ class ftep::serviceregistry (
       'management_port'             => $real_management_port,
       'management_address'          => $management_address,
       'management_context_path'     => $management_context_path,
-      'management_security_enabled' => $management_security_enabled,
       'serviceregistry_user'        => $real_serviceregistry_user,
       'serviceregistry_pass'        => $real_serviceregistry_pass,
       'custom_properties'           => $custom_config_properties,
