@@ -31,6 +31,7 @@ class ftep::proxy (
 
   include ::apache::mod::headers
   include ::apache::mod::proxy
+  include ::apache::mod::proxy_wstunnel
 
   $default_proxy_config = {
     docroot    => '/var/www/html',
@@ -116,6 +117,11 @@ class ftep::proxy (
   ]
 
   $default_proxy_pass_match = [
+    {
+      'path'   => '^/gui/(.*)/websockify$',
+      'url'    => "ws://${ftep::globals::default_gui_hostname}\$1/websockify",
+      'params' => { 'retry' => '0' }
+    },
     {
       'path'   => '^/gui/(.*)$',
       'url'    => "http://${ftep::globals::default_gui_hostname}\$1",
