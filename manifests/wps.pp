@@ -142,9 +142,7 @@ class ftep::wps (
 
     # Allow ZOO-Kernel to connect to postgres
     if $facts['selinux'] {
-      ::selinux::boolean { 'httpd_can_network_connect_db':
-        ensure => true,
-      }
+      ensure_resource(::selinux::boolean, 'httpd_can_network_connect_db', { ensure => true })
     }
   }
 
