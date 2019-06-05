@@ -39,9 +39,20 @@ class ftep::webapp (
   }
 
   ::apache::vhost { 'ftep-webapp':
-    port       => '80',
-    servername => 'ftep-webapp',
-    docroot    => $app_path,
+    port        => '80',
+    servername  => 'ftep-webapp',
+    docroot     => $app_path,
+    directories => [
+      {
+        'path'           => "${app_path}",
+        'options'        => ['Indexes', 'FollowSymLinks', 'MultiViews'],
+      },
+      { 'path'    => "${app_path}/views",
+        'headers' => [
+          'set Cache-Control "no-cache, must-revalidate"'
+        ],
+      },
+    ],
   }
 
 }
