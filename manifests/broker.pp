@@ -3,6 +3,7 @@ class ftep::broker (
   $service_ensure   = true,
   $service_enable   = true,
   $service_name     = 'f-tep-broker',
+  $source_url       = 'http://archive.apache.org/dist/activemq/5.14.5/apache-activemq-5.14.5-bin.zip',
 ) {
 
   require ::ftep::globals
@@ -14,7 +15,8 @@ class ftep::broker (
 
   class { 'activemq':
     install              => 'source',
-    version              => "${activemq_version}",
+    install_source       => $source_url,
+    version              => $activemq_version,
     install_dependencies => false,
     install_destination  => '/opt', # Default value
     create_user          => true, # Default value
