@@ -106,6 +106,16 @@ class ftep::globals (
   $graylog_api_ftep_password        = 'ftepgraylogpass',
 
   $enable_log4j2_graylog            = false,
+
+  # API Proxy config
+  $proxy_dbd_username               = 'ftepproxyuser',
+  $proxy_dbd_password               = 'ftepproxypassword',
+  $proxy_dbd_host                   = 'ftep-db',
+  $proxy_dbd_port                   = 5432,
+  $proxy_dbd_dbdriver               = 'pgsql',
+  $proxy_dbd_query                  = undef,
+  $proxy_dbd_users_table            = 'ftep_users',
+  $proxy_dbd_keys_table             = 'ftep_api_keys',
 ) {
 
   # Alias reverse-proxy hosts via hosts file

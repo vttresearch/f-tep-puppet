@@ -29,9 +29,11 @@ class ftep::proxy (
 
   contain ::ftep::common::apache
 
+  ensure_packages(['apr-util-pgsql'])
   include ::apache::mod::headers
   include ::apache::mod::proxy
   include ::apache::mod::proxy_wstunnel
+  include ::apache::mod::rewrite
 
   $default_proxy_config = {
     docroot    => '/var/www/html',
@@ -53,6 +55,10 @@ class ftep::proxy (
   $real_context_path_logs = pick($context_path_logs, $ftep::globals::context_path_logs)
   $real_context_path_eureka = pick($context_path_eureka, $ftep::globals::context_path_eureka)
   $real_context_path_broker = pick($context_path_broker, $ftep::globals::context_path_broker)
+
+  $real_dbd_query = pick($ftep::globals::proxy_dbd_query,
+    "select api_key from ${ftep::globals::proxy_dbd_keys_table} inner join ${ftep::globals::proxy_dbd_users_table} on ${ftep::globals::proxy_dbd_keys_table}.owner=ftep_users.uid where ${ftep::globals::proxy_dbd_users_table}.name=%s;"
+  )
 
   # Directory/Location directives - cannot be an empty array...
   $default_directories = [
@@ -161,10 +167,25 @@ class ftep::proxy (
       {
         'provider'              => 'location',
         'path'                  => '/secure',
-        'auth_type'             => 'shibboleth',
-        'shib_use_headers'      => 'On',
-        'shib_request_settings' => { 'requireSession' => '1' },
-        'auth_require'          => 'valid-user',
+        'custom_fragment'       =>
+        "<If \"-n req('Authorization')\">
+    AuthType Basic
+    AuthName 'F-TEP API access'
+    AuthBasicProvider dbd
+    AuthDBDUserPWQuery \"${$real_dbd_query}\"
+    Require valid-user
+    RewriteEngine On
+    RewriteCond %{REMOTE_USER} ^(.*)$
+    RewriteRule ^(.*)$ - [E=R_U:%1]
+    RequestHeader set ${ftep::globals::username_request_header} %{R_U}e
+</If>
+<Else>
+    Require valid-user
+    AuthType shibboleth
+    ShibRequestSetting requireSession 1
+    ShibUseHeaders On
+</Else>
+"
       }
     ], $default_directories)
 
@@ -177,7 +198,24 @@ class ftep::proxy (
     }], $default_proxy_pass)
     $proxy_pass_match = $default_proxy_pass_match
   } else {
-    $directories = $default_directories
+    $directories = concat([
+      {
+        'provider'              => 'location',
+        'path'                  => '/secure',
+        'custom_fragment'       =>
+        "<If \"-n req('Authorization')\">
+    AuthType Basic
+    AuthName 'F-TEP API access'
+    AuthBasicProvider dbd
+    AuthDBDUserPWQuery \"${real_dbd_query}\"
+    Require valid-user
+    RewriteEngine On
+    RewriteCond %{REMOTE_USER} ^(.*)$
+    RewriteRule ^(.*)$ - [E=R_U:%1]
+    RequestHeader set ${ftep::globals::username_request_header} %{R_U}e
+</If>
+"
+      }], $default_directories)
     $proxy_pass = $default_proxy_pass
     $proxy_pass_match = $default_proxy_pass_match
   }
@@ -260,7 +298,7 @@ class ftep::proxy (
       directories      => $directories,
       proxy_pass       => $proxy_pass,
       proxy_pass_match => $proxy_pass_match,
-      *                => $default_proxy_config
+      *                => $default_proxy_config,
     }
   } else {
     apache::vhost { $vhost_name:
@@ -275,9 +313,17 @@ class ftep::proxy (
   }
 
   if $facts['selinux'] {
-    ::selinux::boolean { 'httpd_can_network_connect':
-      ensure => true,
-    }
+    ensure_resource('selinux::boolean', 'httpd_can_network_connect_db', {ensure => true})
+    ensure_resource('selinux::boolean', 'httpd_can_network_connect', {ensure => true})
+  }
+
+  class { 'apache::mod::authn_dbd':
+    authn_dbd_params   => "host=${ftep::globals::proxy_dbd_host} port=${ftep::globals::proxy_dbd_port} user=${ftep::globals::proxy_dbd_username} password=${ftep::globals::proxy_dbd_password} dbname=${ftep::globals::ftep_db_v2_name}",
+    authn_dbd_dbdriver => "${ftep::globals::proxy_dbd_dbdriver}",
+    authn_dbd_min      => 1,
+    authn_dbd_max      => 8,
+    authn_dbd_keep     => 4,
+    authn_dbd_exptime  => 30,
   }
 
 }

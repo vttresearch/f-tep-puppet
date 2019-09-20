@@ -47,10 +47,10 @@ class ftep::db::postgresql (
     version             => '10',
     postgis_version     => '2.4',
   } ->
-    class { ::postgresql::server:
-      ipv4acls         => $acls,
-      listen_addresses => '*',
-    }
+  class { ::postgresql::server:
+    ipv4acls         => $acls,
+    listen_addresses => '*',
+  }
   class { ::postgresql::server::postgis: }
   class { ::postgresql::server::contrib: }
 
@@ -85,6 +85,31 @@ class ftep::db::postgresql (
     user     => $db_zoo_username,
     password => postgresql_password($db_zoo_username, $db_zoo_password),
     grant    => 'ALL',
+  }
+  ::postgresql::server::role { 'ftepdb_apireader':
+    username      => $ftep::globals::proxy_dbd_username,
+    password_hash => postgresql_password($ftep::globals::proxy_dbd_username, $ftep::globals::proxy_dbd_password),
+    require       => Postgresql::Server::Db['ftepdb_v2']
+  }
+  ::postgresql::server::table_grant { 'ftepdb_apireader api_keys read permission':
+    db        => $db_v2_name,
+    table     => $ftep::globals::proxy_dbd_keys_table,
+    privilege => 'SELECT',
+    role      => $ftep::globals::proxy_dbd_username,
+    require   => Postgresql::Server::Role['ftepdb_apireader']
+  }
+  ::postgresql::server::table_grant { 'ftepdb_apireader users read permission':
+    db        => $db_v2_name,
+    table     => $ftep::globals::proxy_dbd_users_table,
+    privilege => 'SELECT',
+    role      => $ftep::globals::proxy_dbd_username,
+    require   => Postgresql::Server::Role['ftepdb_apireader']
+  }
+  ::postgresql::server::grant { 'ftepdb_apireader db connect':
+    privilege => 'CONNECT',
+    db        => $db_v2_name,
+    role      => $ftep::globals::proxy_dbd_username,
+    require   => Postgresql::Server::Role['ftepdb_apireader']
   }
 
 }
