@@ -22,6 +22,7 @@ class ftep::db::postgresql (
     $acls = [
       "host ${db_name} ${db_username} samenet md5",
       "host ${db_v2_name} ${db_username} samenet md5",
+      "host ${db_v2_name} ${ftep::globals::proxy_dbd_username} samenet md5",
       "host ${db_resto_name} ${db_resto_username} samenet md5",
       "host ${db_resto_name} ${db_resto_su_username} samenet md5",
       "host ${db_zoo_name} ${db_zoo_username} samenet md5",
@@ -31,8 +32,9 @@ class ftep::db::postgresql (
       "host ${db_name} ${db_username} ${ftep::globals::wps_hostname} md5",
       "host ${db_name} ${db_username} ${ftep::globals::drupal_hostname} md5",
       "host ${db_name} ${db_username} ${ftep::globals::server_hostname} md5",
-      # Access to v2 db only required for f-tep-server
+      # Access to v2 db only required for f-tep-server and proxy
       "host ${db_v2_name} ${db_username} ${ftep::globals::server_hostname} md5",
+      "host ${db_v2_name} ${ftep::globals::proxy_dbd_username} ${ftep::globals::proxy_hostname} md5",
       # Access to resto db only required for ftep-resto
       "host ${db_resto_name} ${db_resto_username} ${ftep::globals::resto_hostname} md5",
       "host ${db_resto_name} ${db_resto_su_username} ${ftep::globals::resto_hostname} md5",
