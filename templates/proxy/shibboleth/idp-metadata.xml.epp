@@ -1,12 +1,12 @@
 <%- |
   String $idp_id,
-  String $idp_scope,
+  String $idp_signature_digest,
+  String $idp_signature_value,
   String $idp_cert,
   Array $artifact_resolution_services,
-  Hash $slo_service,
+  Array $slo_services,
   Array $name_id_formats,
   Array $sso_services,
-  Array $attribute_services,
 | -%>
 <?xml version="1.0" encoding="UTF-8"?>
 <EntityDescriptor entityID="<%= $idp_id %>"
@@ -14,63 +14,62 @@
                   xmlns:ds="http://www.w3.org/2000/09/xmldsig#"
                   xmlns:shibmd="urn:mace:shibboleth:metadata:1.0"
                   xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
-  <IDPSSODescriptor protocolSupportEnumeration="urn:mace:shibboleth:1.0 urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
-    <Extensions>
-      <shibmd:Scope regexp="false"><%= $idp_scope %></shibmd:Scope>
-    </Extensions>
-    <KeyDescriptor>
-      <ds:KeyInfo>
-        <ds:X509Data>
-          <ds:X509Certificate>
+
+  <Signature xmlns="http://www.w3.org/2000/09/xmldsig#">
+    <SignedInfo>
+      <CanonicalizationMethod Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+      <SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#rsa-sha1"/>
+      <Reference URI="">
+      <Transforms>
+      <Transform Algorithm="http://www.w3.org/2000/09/xmldsig#enveloped-signature"/>
+      <Transform Algorithm="http://www.w3.org/2001/10/xml-exc-c14n#"/>
+      </Transforms>
+      <DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/>
+      <DigestValue><%= $idp_signature_digest %></DigestValue>
+      </Reference>
+    </SignedInfo>
+    <SignatureValue>
+<%= $idp_signature_value %>
+    </SignatureValue>
+  </Signature>
+
+  <IDPSSODescriptor WantAuthnRequestsSigned="false"
+                    protocolSupportEnumeration="urn:oasis:names:tc:SAML:2.0:protocol"
+                    validUntil="2030-01-01T00:00:00.000Z">
+
+      <KeyDescriptor use="signing">
+          <KeyInfo xmlns="http://www.w3.org/2000/09/xmldsig#">
+              <X509Data>
+                  <X509Certificate>
 <%= $idp_cert %>
-          </ds:X509Certificate>
-        </ds:X509Data>
-      </ds:KeyInfo>
-    </KeyDescriptor>
+                  </X509Certificate>
+              </X509Data>
+          </KeyInfo>
+      </KeyDescriptor>
 
-<% $artifact_resolution_services.each | $idx, $ars | { %>
-    <ArtifactResolutionService index="<%= $idx + 1 %>"
-      Binding="<%= $ars['binding'] %>"
-      Location="<%= $ars['location'] %>"/>
-<% } -%>
+      <%- $artifact_resolution_services.each | $idx, $ars | { -%>
+      <ArtifactResolutionService index="<%= $idx + 1 %>"
+        Binding="<%= $ars['binding'] %>"
+        Location="<%= $ars['location'] %>"/>
+      <% } -%>
 
-    <SingleLogoutService Binding="<%= $slo_service['binding'] %>"
-      Location="<%= $slo_service['location'] %>"
-      ResponseLocation="<%= $slo_service['response_location'] %>"/>
+      <%- $slo_services.each | $idx, $slo | { -%>
+      <SingleLogoutService
+        Binding="<%= $slo['binding'] %>"
+        Location="<%= $slo['location'] %>"
+        ResponseLocation="<%= $slo['response_location'] %>"/>
+      <% } -%>
 
-<% $name_id_formats.each | $nif | { %>
-    <NameIDFormat><%= $nif %></NameIDFormat>
-<% } -%>
+      <%- $name_id_formats.each | $nif | { -%>
+      <NameIDFormat><%= $nif %></NameIDFormat>
+      <% } -%>
 
-<% $sso_services.each | $sso | { %>
-    <SingleSignOnService Binding="<%= $sso['binding'] %>"
-      Location="<%= $sso['location'] %>"/>
-<% } -%>
+      <%- $sso_services.each | $sso | { -%>
+      <SingleSignOnService
+        Binding="<%= $sso['binding'] %>"
+        Location="<%= $sso['location'] %>"/>
+      <% } -%>
+
   </IDPSSODescriptor>
-
-  <AttributeAuthorityDescriptor protocolSupportEnumeration="urn:oasis:names:tc:SAML:1.1:protocol urn:oasis:names:tc:SAML:2.0:protocol">
-    <Extensions>
-      <shibmd:Scope regexp="false"><%= $idp_scope %></shibmd:Scope>
-    </Extensions>
-    <KeyDescriptor>
-      <ds:KeyInfo>
-        <ds:X509Data>
-          <ds:X509Certificate>
-<%= $idp_cert %>
-          </ds:X509Certificate>
-        </ds:X509Data>
-      </ds:KeyInfo>
-    </KeyDescriptor>
-
-<% $attribute_services.each | $as | { %>
-    <AttributeService Binding="<%= $as['binding'] %>"
-      Location="<%= $as['location'] %>"/>
-<% } -%>
-
-<% $name_id_formats.each | $nif | { %>
-    <NameIDFormat><%= $nif %></NameIDFormat>
-<% } -%>
-
-  </AttributeAuthorityDescriptor>
 
 </EntityDescriptor>
