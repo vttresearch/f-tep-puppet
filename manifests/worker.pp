@@ -1,48 +1,48 @@
 class ftep::worker (
-  $component_name              = 'f-tep-worker',
+  $component_name           = 'f-tep-worker',
 
-  $install_path                = '/var/f-tep/worker',
-  $config_file                 = '/var/f-tep/worker/f-tep-worker.conf',
-  $logging_config_file         = '/var/f-tep/worker/log4j2.xml',
-  $properties_file             = '/var/f-tep/worker/application.properties',
+  $install_path             = '/var/f-tep/worker',
+  $config_file              = '/var/f-tep/worker/f-tep-worker.conf',
+  $logging_config_file      = '/var/f-tep/worker/log4j2.xml',
+  $properties_file          = '/var/f-tep/worker/application.properties',
 
-  $service_enable              = true,
-  $service_ensure              = 'running',
+  $service_enable           = true,
+  $service_ensure           = 'running',
 
-  $telegraf_enable             = true,
+  $telegraf_enable          = true,
 
-  $java_opts                          = '',
+  $java_opts                = '',
 
   # f-tep-worker application.properties config
-  $application_port            = undef,
-  $grpc_port                   = undef,
+  $application_port         = undef,
+  $grpc_port                = undef,
 
-  $management_port             = undef,
-  $management_address          = '127.0.0.1',
-  $management_context_path     = '/manage',
+  $management_port          = undef,
+  $management_address       = '127.0.0.1',
+  $management_context_path  = '/manage',
 
-  $serviceregistry_user        = undef,
-  $serviceregistry_pass        = undef,
-  $serviceregistry_host        = undef,
-  $serviceregistry_port        = undef,
-  $serviceregistry_url         = undef,
+  $serviceregistry_user     = undef,
+  $serviceregistry_pass     = undef,
+  $serviceregistry_host     = undef,
+  $serviceregistry_port     = undef,
+  $serviceregistry_url      = undef,
 
-  $broker_url                  = undef,
-  $broker_username             = undef,
-  $broker_password             = undef,
+  $broker_url               = undef,
+  $broker_username          = undef,
+  $broker_password          = undef,
 
-  $worker_environment          = 'LOCAL',
+  $worker_environment       = 'LOCAL',
 
-  $cache_concurrency           = 4,
-  $cache_maxweight             = 1024,
-  $cache_dir                   = 'dl',
-  $jobs_dir                    = 'jobs',
+  $cache_concurrency        = 4,
+  $cache_maxweight          = 1024,
+  $cache_dir                = 'dl',
+  $jobs_dir                 = 'jobs',
 
-  $ipt_auth_endpoint           = 'https://finder.eocloud.eu/resto/api/authidentity',
+  $ipt_auth_endpoint        = 'https://finder.eocloud.eu/resto/api/authidentity',
   # These are not undef so they're not mandatory parameters, but must be set correctly if IPT downloads are required
-  $ipt_auth_domain             = '__secret__',
+  $ipt_auth_domain          = '__secret__',
 
-  $custom_config_properties    = {},
+  $custom_config_properties = {},
 ) {
 
   require ::ftep::globals
@@ -66,7 +66,7 @@ class ftep::worker (
   $real_serviceregistry_url = pick($serviceregistry_url,
     "http://${serviceregistry_creds}@${serviceregistry_server}/eureka/")
 
-  $real_broker_url= pick($broker_url, "${ftep::globals::base_url}${ftep::globals::context_path_broker}/")
+  $real_broker_url = pick($broker_url, "${ftep::globals::base_url}${ftep::globals::context_path_broker}/")
   $real_broker_username = pick($broker_username, $ftep::globals::broker_ftep_username)
   $real_broker_password = pick($broker_password, $ftep::globals::broker_ftep_password)
 
@@ -99,9 +99,9 @@ class ftep::worker (
   }
 
   ::ftep::logging::log4j2 { $logging_config_file:
-    ftep_component        => $component_name,
-    require               => Package['f-tep-worker'],
-    notify                => Service['f-tep-worker'],
+    ftep_component => $component_name,
+    require        => Package['f-tep-worker'],
+    notify         => Service['f-tep-worker'],
   }
 
   file { $properties_file:
@@ -109,24 +109,24 @@ class ftep::worker (
     owner   => $ftep::globals::user,
     group   => $ftep::globals::group,
     content => epp('ftep/worker/application.properties.epp', {
-      'logging_config_file'         => $logging_config_file,
-      'server_port'                 => $real_application_port,
-      'grpc_port'                   => $real_grpc_port,
-      'management_port'             => $real_management_port,
-      'management_address'          => $management_address,
-      'management_context_path'     => $management_context_path,
-      'serviceregistry_url'         => $real_serviceregistry_url,
-      'worker_environment'          => $worker_environment,
-      'jobs_basedir'                => "${ftep::common::datadir::data_basedir}/${jobs_dir}",
-      'cache_basedir'               => "${ftep::common::datadir::data_basedir}/${cache_dir}",
-      'cache_concurrency'           => $cache_concurrency,
-      'cache_maxweight'             => $cache_maxweight,
-      'ipt_auth_endpoint'           => $ipt_auth_endpoint,
-      'ipt_auth_domain'             => $ipt_auth_domain,
-      'broker_url'                  => $real_broker_url,
-      'broker_username'             => $real_broker_username,
-      'broker_password'             => $real_broker_password,
-      'custom_properties'           => $custom_config_properties,
+      'logging_config_file'     => $logging_config_file,
+      'server_port'             => $real_application_port,
+      'grpc_port'               => $real_grpc_port,
+      'management_port'         => $real_management_port,
+      'management_address'      => $management_address,
+      'management_context_path' => $management_context_path,
+      'serviceregistry_url'     => $real_serviceregistry_url,
+      'worker_environment'      => $worker_environment,
+      'jobs_basedir'            => "${ftep::common::datadir::data_basedir}/${jobs_dir}",
+      'cache_basedir'           => "${ftep::common::datadir::data_basedir}/${cache_dir}",
+      'cache_concurrency'       => $cache_concurrency,
+      'cache_maxweight'         => $cache_maxweight,
+      'ipt_auth_endpoint'       => $ipt_auth_endpoint,
+      'ipt_auth_domain'         => $ipt_auth_domain,
+      'broker_url'              => $real_broker_url,
+      'broker_username'         => $real_broker_username,
+      'broker_password'         => $real_broker_password,
+      'custom_properties'       => $custom_config_properties,
     }),
     require => Package['f-tep-worker'],
     notify  => Service['f-tep-worker'],
