@@ -2,7 +2,7 @@
   String $sp_id,
   String $sp_cert,
   Array $assertion_consumer_services,
-  Hash $slo_service,
+  Array $slo_services,
   Array $name_id_formats,
   String $org_name,
   String $org_display_name,
@@ -27,18 +27,21 @@
       </ds:KeyInfo>
     </KeyDescriptor>
 
-<% $assertion_consumer_services.each | $idx, $acs | { %>
-    <AssertionConsumerService index="<%= $idx + 1 %>"
-      Binding="<%= $acs['binding'] %>"
-      Location="<%= $acs['location'] %>"/>
-<% } -%>
+      <%- $assertion_consumer_services.each | $idx, $acs | { -%>
+      <AssertionConsumerService index="<%= $idx + 1 %>"
+        Binding="<%= $acs['binding'] %>"
+        Location="<%= $acs['location'] %>"/>
+      <% } -%>
 
-    <SingleLogoutService Binding="<%= $slo_service['binding'] %>"
-      Location="<%= $slo_service['location'] %>"/>
+      <%- $slo_services.each | $idx, $slo | { -%>
+      <SingleLogoutService
+        Binding="<%= $slo['binding'] %>"
+        Location="<%= $slo['location'] %>"/>
+      <% } -%>
 
-<% $name_id_formats.each | $nif | { %>
-    <NameIDFormat><%= $nif %></NameIDFormat>
-<% } -%>
+      <%- $name_id_formats.each | $nif | { -%>
+      <NameIDFormat><%= $nif %></NameIDFormat>
+      <% } -%>
 
   </SPSSODescriptor>
 
