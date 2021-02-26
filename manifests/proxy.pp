@@ -2,6 +2,7 @@
 class ftep::proxy (
   $vhost_name             = 'ftep-proxy',
   $vhost_aliases          = {},
+  $default_vhost_dest     = 'http://ftep-drupal',
 
   $enable_ssl             = false,
   $enable_sso             = false,
@@ -38,7 +39,7 @@ class ftep::proxy (
   $default_proxy_config = {
     docroot    => '/var/www/html',
     vhost_name => '_default_', # The default landing site should always be Drupal
-    proxy_dest => 'http://ftep-drupal', # Drupal is always mounted at the base_url
+    proxy_dest => $default_vhost_dest,
     rewrites   => [
       {
         rewrite_rule => ['^/app$ /app/ [R]']
@@ -56,9 +57,12 @@ class ftep::proxy (
   $real_context_path_eureka = pick($context_path_eureka, $ftep::globals::context_path_eureka)
   $real_context_path_broker = pick($context_path_broker, $ftep::globals::context_path_broker)
 
-  $real_dbd_query = pick($ftep::globals::proxy_dbd_query,
-    "select api_key from ${ftep::globals::proxy_dbd_keys_table} inner join ${ftep::globals::proxy_dbd_users_table} on ${ftep::globals::proxy_dbd_keys_table}.owner=ftep_users.uid where ${ftep::globals::proxy_dbd_users_table}.name=%s;"
-  )
+  $real_dbd_query = pick($ftep::globals::proxy_dbd_query, join([
+    "select api_key from ${ftep::globals::proxy_dbd_keys_table}",
+    "inner join ${ftep::globals::proxy_dbd_users_table}",
+    "on ${ftep::globals::proxy_dbd_keys_table}.owner=ftep_users.uid",
+    "where ${ftep::globals::proxy_dbd_users_table}.name=%s;"
+  ], ' '))
 
   # Directory/Location directives - cannot be an empty array...
   $default_directories = [
@@ -165,9 +169,9 @@ class ftep::proxy (
         'auth_require'          => 'valid-user',
       },
       {
-        'provider'              => 'location',
-        'path'                  => '/secure',
-        'custom_fragment'       =>
+        'provider'        => 'location',
+        'path'            => '/secure',
+        'custom_fragment' =>
         "<If \"-n req('Authorization')\">
     AuthType Basic
     AuthName 'F-TEP API access'
@@ -200,9 +204,9 @@ class ftep::proxy (
   } else {
     $directories = concat([
       {
-        'provider'              => 'location',
-        'path'                  => '/secure',
-        'custom_fragment'       =>
+        'provider'        => 'location',
+        'path'            => '/secure',
+        'custom_fragment' =>
         "<If \"-n req('Authorization')\">
     AuthType Basic
     AuthName 'F-TEP API access'
@@ -313,12 +317,18 @@ class ftep::proxy (
   }
 
   if $facts['selinux'] {
-    ensure_resource('selinux::boolean', 'httpd_can_network_connect_db', {ensure => true})
-    ensure_resource('selinux::boolean', 'httpd_can_network_connect', {ensure => true})
+    ensure_resource('selinux::boolean', 'httpd_can_network_connect_db', { ensure => true })
+    ensure_resource('selinux::boolean', 'httpd_can_network_connect', { ensure => true })
   }
 
   class { 'apache::mod::authn_dbd':
-    authn_dbd_params   => "host=${ftep::globals::proxy_dbd_host} port=${ftep::globals::proxy_dbd_port} user=${ftep::globals::proxy_dbd_username} password=${ftep::globals::proxy_dbd_password} dbname=${ftep::globals::ftep_db_v2_name}",
+    authn_dbd_params   => join([
+      "host=${ftep::globals::proxy_dbd_host}",
+      "port=${ftep::globals::proxy_dbd_port}",
+      "user=${ftep::globals::proxy_dbd_username}",
+      "password=${ftep::globals::proxy_dbd_password}",
+      "dbname=${ftep::globals::ftep_db_v2_name}"
+    ], ' '),
     authn_dbd_dbdriver => "${ftep::globals::proxy_dbd_dbdriver}",
     authn_dbd_min      => 1,
     authn_dbd_max      => 8,
