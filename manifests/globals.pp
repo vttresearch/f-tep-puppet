@@ -23,6 +23,7 @@ class ftep::globals (
   # Hostnames and IPs for components
   $db_hostname                      = 'ftep-db',
   $drupal_hostname                  = 'ftep-drupal',
+  $wordpress_hostname               = 'ftep-wordpress',
   $geoserver_hostname               = 'ftep-geoserver',
   $proxy_hostname                   = 'ftep-proxy',
   $webapp_hostname                  = 'ftep-webapp',
@@ -51,6 +52,9 @@ class ftep::globals (
   $ftep_db_zoo_name                 = 'ftep_zoo',
   $ftep_db_zoo_username             = 'ftepzoo',
   $ftep_db_zoo_password             = 'ftepzoopass',
+  $wordpress_db_name                = 'ftep_wordpress',
+  $wordpress_db_username            = 'ftepwordpress',
+  $wordpress_db_password            = 'ftepwordpresspass',
 
   # SSO configuration
   $username_request_header          = 'REMOTE_USER',
@@ -95,7 +99,8 @@ class ftep::globals (
   $monitor_data_port                = 8086,
 
   # graylog config
-  $graylog_secret                   = 'bQ999ugSIvHXfWQqrwvAomNxaMsErX6I4UWicpS9ZU8EDmuFnhX9AmcoM43s4VGKixd2f6d6cELbRuPWO5uayHnBrBbNWVth',
+  $graylog_secret                   =
+  'bQ999ugSIvHXfWQqrwvAomNxaMsErX6I4UWicpS9ZU8EDmuFnhX9AmcoM43s4VGKixd2f6d6cELbRuPWO5uayHnBrBbNWVth',
   # sha256 of graylogpass:
   $graylog_sha256                   = 'a7fdfe53e2a13cb602def10146388c65051c67e60ee55c051668a1c709449111',
   $graylog_port                     = 8087,
@@ -127,5 +132,9 @@ class ftep::globals (
   # Setup of the repo only makes sense globally, so we are doing this here.
   if($manage_package_repo) {
     require ::ftep::repo
+  }
+
+  if $facts['os']['family'] == 'Debian' {
+    class { '::apt': }
   }
 }
