@@ -5,7 +5,7 @@ class ftep::webapp (
   $ftep_url        = undef,
   $api_url         = undef,
   $api_v2_url      = undef,
-  $sso_url         = 'https://eo-sso-idp.evo-pdgs.com',
+  $sso_url         = 'https://eoiam-idp.eo.esa.int',
   $mapbox_token    = 'pk.eyJ1IjoidmFuemV0dGVucCIsImEiOiJjaXZiZTM3Y2owMDdqMnVwa2E1N2VsNGJnIn0.A9BNRSTYajN0fFaVdJIpzQ',
 ) {
 

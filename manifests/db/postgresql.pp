@@ -1,22 +1,24 @@
 class ftep::db::postgresql (
-  $db_name              = $ftep::globals::ftep_db_name,
-  $db_v2_name           = $ftep::globals::ftep_db_v2_name,
-  $db_username          = $ftep::globals::ftep_db_username,
-  $db_password          = $ftep::globals::ftep_db_password,
+  $db_name               = $ftep::globals::ftep_db_name,
+  $db_v2_name            = $ftep::globals::ftep_db_v2_name,
+  $db_username           = $ftep::globals::ftep_db_username,
+  $db_password           = $ftep::globals::ftep_db_password,
 
-  $db_resto_name        = $ftep::globals::ftep_db_resto_name,
-  $db_resto_username    = $ftep::globals::ftep_db_resto_username,
-  $db_resto_password    = $ftep::globals::ftep_db_resto_password,
-  $db_resto_su_username = $ftep::globals::ftep_db_resto_su_username,
-  $db_resto_su_password = $ftep::globals::ftep_db_resto_su_password,
+  $db_resto_name         = $ftep::globals::ftep_db_resto_name,
+  $db_resto_username     = $ftep::globals::ftep_db_resto_username,
+  $db_resto_password     = $ftep::globals::ftep_db_resto_password,
+  $db_resto_su_username  = $ftep::globals::ftep_db_resto_su_username,
+  $db_resto_su_password  = $ftep::globals::ftep_db_resto_su_password,
 
-  $db_zoo_name          = $ftep::globals::ftep_db_zoo_name,
-  $db_zoo_username      = $ftep::globals::ftep_db_zoo_username,
-  $db_zoo_password      = $ftep::globals::ftep_db_zoo_password,
+  $db_zoo_name           = $ftep::globals::ftep_db_zoo_name,
+  $db_zoo_username       = $ftep::globals::ftep_db_zoo_username,
+  $db_zoo_password       = $ftep::globals::ftep_db_zoo_password,
 ) {
 
-  # EPEL is required for the postgis extensions
-  require ::epel
+  if $facts['os']['family'] == 'RedHat' {
+    # EPEL is required for the postgis extensions
+    require ::epel
+  }
 
   if $ftep::db::trust_local_network {
     $acls = [

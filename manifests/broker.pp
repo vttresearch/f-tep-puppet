@@ -28,7 +28,8 @@ class ftep::broker (
 
   # Make sure the activemq binary is executable
   file { "/opt/apache-activemq-${activemq_version}/bin/activemq":
-    mode => '0755'
+    mode    => '0755',
+    require => [Puppi::Netinstall['netinstall_activemq']],
   }
 
   $service_unit_content = "[Unit]
@@ -51,7 +52,6 @@ WantedBy=multi-user.target
   file { "/usr/lib/systemd/system/${service_name}.service":
     content => $service_unit_content,
     ensure  => present,
-    require => Puppi::Netinstall['netinstall_activemq'],
   }
 
   service { $service_name:
@@ -59,7 +59,10 @@ WantedBy=multi-user.target
     enable     => $service_enable,
     hasrestart => true,
     hasstatus  => true,
-    require    => [File["/opt/apache-activemq-${activemq_version}/bin/activemq"], File["/usr/lib/systemd/system/${service_name}.service"]],
+    require    => [
+      File["/opt/apache-activemq-${activemq_version}/bin/activemq"],
+      File["/usr/lib/systemd/system/${service_name}.service"]
+    ],
   }
 
 }
