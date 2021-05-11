@@ -7,6 +7,7 @@ class ftep::webapp (
   $api_v2_url      = undef,
   $sso_url         = 'https://eoiam-idp.eo.esa.int',
   $mapbox_token    = 'pk.eyJ1IjoidmFuemV0dGVucCIsImEiOiJjaXZiZTM3Y2owMDdqMnVwa2E1N2VsNGJnIn0.A9BNRSTYajN0fFaVdJIpzQ',
+  $helpdesk_url    = 'https://f-tep.com/registration-and-support/#helpdesk',
 ) {
 
   require ::ftep::globals
@@ -34,6 +35,7 @@ class ftep::webapp (
       'api_v2_url'   => $real_api_v2_url,
       'sso_url'      => $sso_url,
       'mapbox_token' => $mapbox_token,
+      'helpdesk_url' => $helpdesk_url,
     }),
     require => Package['f-tep-portal'],
   }
