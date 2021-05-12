@@ -4,6 +4,7 @@
     String $api_v2_url,
     String $sso_url,
     String $mapbox_token,
+    String $helpdesk_url,
 | -%>
 // Managed by Puppet
 define('ftepConfig', [], function () {
@@ -12,6 +13,7 @@ define('ftepConfig', [], function () {
     apiUrl: "<%= $api_url %>",
     apiUrlv2: "<%= $api_v2_url %>",
     ssoUrl: "<%= $sso_url %>",
-    mapboxToken: "<%= $mapbox_token %>"
+    mapboxToken: "<%= $mapbox_token %>",
+    helpdeskUrl: "<%= $helpdesk_url %>"
   }
 });
