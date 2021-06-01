@@ -1,0 +1,38 @@
+<%- |
+    String $traefik_admin_user,
+    Integer $traefik_admin_port,
+    Integer $traefik_service_port
+| -%>
+# Managed by Puppet
+
+logLevel = "ERROR"
+
+defaultEntryPoints = ["http"]
+
+[entryPoints]
+
+    [entryPoints.http]
+        address = ":<%= $traefik_service_port %>"
+
+    [entryPoints.admin]
+        address = ":<%= $traefik_admin_port %>"
+
+        [entryPoints.admin.auth]
+            [entryPoints.admin.auth.basic]
+                users = [
+                  "<%= $traefik_admin_user %>",
+                ]
+
+[traefikLog]
+
+[accessLog]
+
+[api]
+    entrypoint = "admin"
+    dashboard = true
+
+[ping]
+    entryPoint = "admin"
+
+[rest]
+    entryPoint = "admin"

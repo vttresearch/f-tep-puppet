@@ -10,8 +10,7 @@ class ftep::broker (
   require ::ftep::common::java
   require ::epel
 
-  $activemq_prereq = [ 'wget', 'unzip' ]
-  package { $activemq_prereq: ensure => 'installed' } ->
+  ensure_packages(['wget', 'unzip'])
 
   class { 'activemq':
     install              => 'source',

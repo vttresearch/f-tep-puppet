@@ -15,6 +15,7 @@ class ftep::globals (
   $context_path_logs                = '/logs',
   $context_path_eureka              = '/eureka',
   $context_path_broker              = '/broker',
+  $context_path_gui                 = '/gui',
 
   # System user
   $user                             = 'ftep',
@@ -32,7 +33,7 @@ class ftep::globals (
   $monitor_hostname                 = 'ftep-monitor',
   $resto_hostname                   = 'ftep-resto',
   $broker_hostname                  = 'ftep-broker',
-  $default_gui_hostname             = 'ftep-worker',
+  $default_gui_hostname             = 'ftep-traefik',
 
   $hosts_override                   = {},
 
@@ -63,6 +64,12 @@ class ftep::globals (
   # Eureka config
   $serviceregistry_user             = 'ftepeureka',
   $serviceregistry_pass             = 'ftepeurekapass',
+
+  # Traefik admin user config, generate with htpasswd
+  $traefik_user                     = 'fteptraefik',
+  $traefik_password                 = 'fteptraefikpass',
+  $traefik_admin_port               = 8000,
+  $traefik_service_port             = 10000,
 
   # App server config for HTTP and gRPC
   $serviceregistry_application_port = 8761,

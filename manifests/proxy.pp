@@ -1,29 +1,31 @@
 # Configure the gateway to the F-TEP services, reverse-proxying to nodes implementing the other classes
 class ftep::proxy (
-  $vhost_name             = 'ftep-proxy',
-  $vhost_aliases          = {},
-  $default_vhost_dest     = 'http://ftep-drupal',
+  $vhost_name                = 'ftep-proxy',
+  $vhost_aliases             = {},
+  $default_vhost_dest        = 'http://ftep-drupal',
 
-  $enable_ssl             = false,
-  $enable_sso             = false,
+  $enable_ssl                = false,
+  $enable_sso                = false,
 
-  $context_path_geoserver = undef,
-  $context_path_resto     = undef,
-  $context_path_webapp    = undef,
-  $context_path_wps       = undef,
-  $context_path_api_v2    = undef,
-  $context_path_monitor   = undef,
-  $context_path_logs      = undef,
-  $context_path_eureka    = undef,
-  $context_path_gui       = undef,
-  $context_path_broker    = undef,
+  $context_path_geoserver    = undef,
+  $context_path_resto        = undef,
+  $context_path_webapp       = undef,
+  $context_path_wps          = undef,
+  $context_path_api_v2       = undef,
+  $context_path_monitor      = undef,
+  $context_path_logs         = undef,
+  $context_path_eureka       = undef,
+  $context_path_broker       = undef,
+  $context_path_gui          = undef,
 
-  $tls_cert_path          = '/etc/pki/tls/certs/ftep_portal.crt',
-  $tls_chain_path         = '/etc/pki/tls/certs/ftep_portal.chain.crt',
-  $tls_key_path           = '/etc/pki/tls/private/ftep_portal.key',
-  $tls_cert               = undef,
-  $tls_chain              = undef,
-  $tls_key                = undef,
+  $preserve_gui_context_path = false,
+
+  $tls_cert_path             = '/etc/pki/tls/certs/ftep_portal.crt',
+  $tls_chain_path            = '/etc/pki/tls/certs/ftep_portal.chain.crt',
+  $tls_key_path              = '/etc/pki/tls/private/ftep_portal.key',
+  $tls_cert                  = undef,
+  $tls_chain                 = undef,
+  $tls_key                   = undef,
 ) {
 
   require ::ftep::globals
@@ -36,17 +38,6 @@ class ftep::proxy (
   include ::apache::mod::proxy_wstunnel
   include ::apache::mod::rewrite
 
-  $default_proxy_config = {
-    docroot    => '/var/www/html',
-    vhost_name => '_default_', # The default landing site should always be Drupal
-    proxy_dest => $default_vhost_dest,
-    rewrites   => [
-      {
-        rewrite_rule => ['^/app$ /app/ [R]']
-      }
-    ]
-  }
-
   $real_context_path_geoserver = pick($context_path_geoserver, $ftep::globals::context_path_geoserver)
   $real_context_path_resto = pick($context_path_resto, $ftep::globals::context_path_resto)
   $real_context_path_webapp = pick($context_path_webapp, $ftep::globals::context_path_webapp)
@@ -56,6 +47,7 @@ class ftep::proxy (
   $real_context_path_logs = pick($context_path_logs, $ftep::globals::context_path_logs)
   $real_context_path_eureka = pick($context_path_eureka, $ftep::globals::context_path_eureka)
   $real_context_path_broker = pick($context_path_broker, $ftep::globals::context_path_broker)
+  $real_context_path_gui = pick($context_path_gui, $ftep::globals::context_path_gui)
 
   $real_dbd_query = pick($ftep::globals::proxy_dbd_query, join([
     "select api_key from ${ftep::globals::proxy_dbd_keys_table}",
@@ -63,6 +55,28 @@ class ftep::proxy (
     "on ${ftep::globals::proxy_dbd_keys_table}.owner=ftep_users.uid",
     "where ${ftep::globals::proxy_dbd_users_table}.name=%s;"
   ], ' '))
+
+  $gui_match_path = "^${real_context_path_gui}/(.*)"
+  if $preserve_gui_context_path {
+    $gui_backend_prefix = "${ftep::globals::default_gui_hostname}${real_context_path_gui}/\$1"
+  } else {
+    $gui_backend_prefix = "${ftep::globals::default_gui_hostname}\$1"
+  }
+
+  $default_proxy_config = {
+    docroot    => '/var/www/html',
+    vhost_name => '_default_', # The default landing site should always be Drupal
+    proxy_dest => $default_vhost_dest,
+    rewrites   => [
+      {
+        rewrite_rule => ['^/app$ /app/ [R]']
+      },
+      {
+        rewrite_cond => ['%{HTTP:UPGRADE} ^WebSocket$ [NC]', '%{HTTP:CONNECTION} ^Upgrade$ [NC]'],
+        rewrite_rule => ["${gui_match_path}  ws://${gui_backend_prefix} [P]"]
+      },
+    ]
+  }
 
   # Directory/Location directives - cannot be an empty array...
   $default_directories = [
@@ -128,13 +142,13 @@ class ftep::proxy (
 
   $default_proxy_pass_match = [
     {
-      'path'   => '^/gui/(.*)/websockify$',
-      'url'    => "ws://${ftep::globals::default_gui_hostname}\$1/websockify",
+      'path'   => "${gui_match_path}/websockify$",
+      'url'    => "ws://${gui_backend_prefix}/websockify",
       'params' => { 'retry' => '0' }
     },
     {
-      'path'   => '^/gui/(.*)$',
-      'url'    => "http://${ftep::globals::default_gui_hostname}\$1",
+      'path'   => "${gui_match_path}",
+      'url'    => "http://${gui_backend_prefix}",
       'params' => { 'retry' => '0' }
     }
   ]
