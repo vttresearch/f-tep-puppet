@@ -44,8 +44,15 @@ class ftep::server (
   $local_worker_hostname              = 'ftep-worker',
   $local_worker_grpc_port             = undef,
 
-  # Pattern for building GUI URLs, based on the subsituted string '__PORT__'
+  # Pattern for building GUI URLs, may include the subsituted variables '__PORT__', '__JOB_UUID__'
+  # For simple ftep::proxy proxying (default if this is undef): http://example.com/gui/:__PORT__/
+  # For Traefik proxying: http://example.com/gui/__JOB_UUID__/
+  $gui_mode                           = 'SIMPLE',
   $gui_url_pattern                    = undef,
+  $traefik_api_url                    = undef,
+  $traefik_admin_user                 = undef,
+  $traefik_admin_password             = undef,
+  $traefik_enable_sso_headers         = true,
 
   $graylog_api_url                    = undef,
   $graylog_api_username               = undef,
@@ -129,6 +136,9 @@ class ftep::server (
   $real_graylog_api_password = pick($graylog_api_username, $ftep::globals::graylog_api_ftep_password)
 
   $real_gui_url_pattern = pick($gui_url_pattern, "${ftep::globals::base_url}/gui/:__PORT__/")
+  $real_traefik_api_url = pick($traefik_api_url, "http://${ftep::globals::default_gui_hostname}:${ftep::globals::traefik_service_port}/api/providers/rest")
+  $real_traefik_admin_user = pick($traefik_admin_user, $ftep::globals::traefik_user)
+  $real_traefik_admin_password = pick($traefik_admin_password, $ftep::globals::traefik_password)
 
   ensure_packages(['f-tep-server'], {
     ensure  => 'latest',
@@ -189,7 +199,12 @@ class ftep::server (
       'graylog_api_url'                    => $real_graylog_api_url,
       'graylog_api_username'               => $real_graylog_api_username,
       'graylog_api_password'               => $real_graylog_api_password,
+      'gui_mode'                           => $gui_mode,
       'gui_url_pattern'                    => $real_gui_url_pattern,
+      'traefik_api_url'                    => $real_traefik_api_url,
+      'traefik_admin_user'                 => $real_traefik_admin_user,
+      'traefik_admin_password'             => $real_traefik_admin_password,
+      'traefik_enable_sso_headers'         => $traefik_enable_sso_headers,
       'output_products_dir'                => "${ftep::common::datadir::data_basedir}/${output_products_dir}",
       'refdata_dir'                        => "${ftep::common::datadir::data_basedir}/${refdata_dir}",
       'geoserver_enabled'                  => $geoserver_enabled,

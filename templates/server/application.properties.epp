@@ -25,7 +25,12 @@
     String $graylog_api_username,
     String $graylog_api_password,
 
+    String $gui_mode,
     String $gui_url_pattern,
+    String $traefik_api_url,
+    String $traefik_admin_user,
+    String $traefik_admin_password,
+    Boolean $traefik_enable_sso_headers,
 
     String $output_products_dir,
     String $refdata_dir,
@@ -103,7 +108,12 @@ ftep.api.logs.username=<%= $graylog_api_username %>
 ftep.api.logs.password=<%= $graylog_api_password %>
 
 # Pattern for building GUI application URLs
+ftep.orchestrator.gui.mode=<%= $gui_mode %>
 ftep.orchestrator.gui.urlPattern=<%= $gui_url_pattern %>
+ftep.orchestrator.traefik.url=<%= $traefik_api_url %>
+ftep.orchestrator.traefik.user=<%= $traefik_admin_user %>
+ftep.orchestrator.traefik.password=<%= $traefik_admin_password %>
+ftep.orchestrator.traefik.enableSSOHeaders=<%= $traefik_enable_sso_headers %>
 
 # Catalogue service configuration
 ftep.catalogue.outputProducts.baseDir=<%= $output_products_dir %>
