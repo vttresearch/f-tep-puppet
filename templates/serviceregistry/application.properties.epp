@@ -25,6 +25,8 @@ server.port=<%= $server_port %>
 management.server.address=<%= $management_address %>
 management.server.port=<%= $management_port %>
 management.server.servlet.context-path=<%= $management_context_path %>
+management.endpoints.jmx.exposure.include=info,health,metrics
+management.endpoints.web.exposure.include=info,health,metrics,jolokia
 
 spring.security.user.name=<%= $serviceregistry_user %>
 spring.security.user.password=<%= $serviceregistry_pass %>
