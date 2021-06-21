@@ -73,7 +73,7 @@ class ftep::globals (
 
   # App server config for HTTP and gRPC
   $serviceregistry_application_port = 8761,
-  $serviceregistry_management_port  = 8161,
+  $serviceregistry_management_port  = 8762,
 
   $server_application_port          = 8090,
   $server_management_port           = 8190,

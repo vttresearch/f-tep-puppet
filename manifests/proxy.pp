@@ -1,31 +1,32 @@
 # Configure the gateway to the F-TEP services, reverse-proxying to nodes implementing the other classes
 class ftep::proxy (
-  $vhost_name                = 'ftep-proxy',
-  $vhost_aliases             = {},
-  $default_vhost_dest        = 'http://ftep-drupal',
+  $vhost_name                      = 'ftep-proxy',
+  $vhost_aliases                   = {},
+  $default_vhost_dest              = 'http://ftep-drupal',
 
-  $enable_ssl                = false,
-  $enable_sso                = false,
+  $enable_ssl                      = false,
+  $enable_sso                      = false,
 
-  $context_path_geoserver    = undef,
-  $context_path_resto        = undef,
-  $context_path_webapp       = undef,
-  $context_path_wps          = undef,
-  $context_path_api_v2       = undef,
-  $context_path_monitor      = undef,
-  $context_path_logs         = undef,
-  $context_path_eureka       = undef,
-  $context_path_broker       = undef,
-  $context_path_gui          = undef,
+  $context_path_geoserver          = undef,
+  $context_path_resto              = undef,
+  $context_path_webapp             = undef,
+  $context_path_wps                = undef,
+  $context_path_api_v2             = undef,
+  $context_path_monitor            = undef,
+  $context_path_logs               = undef,
+  $context_path_eureka             = undef,
+  $context_path_broker             = undef,
+  $context_path_gui                = undef,
 
-  $preserve_gui_context_path = false,
+  $preserve_gui_context_path       = false,
+  $graylog_server_url_includes_api = false,
 
-  $tls_cert_path             = '/etc/pki/tls/certs/ftep_portal.crt',
-  $tls_chain_path            = '/etc/pki/tls/certs/ftep_portal.chain.crt',
-  $tls_key_path              = '/etc/pki/tls/private/ftep_portal.key',
-  $tls_cert                  = undef,
-  $tls_chain                 = undef,
-  $tls_key                   = undef,
+  $tls_cert_path                   = '/etc/pki/tls/certs/ftep_portal.crt',
+  $tls_chain_path                  = '/etc/pki/tls/certs/ftep_portal.chain.crt',
+  $tls_key_path                    = '/etc/pki/tls/private/ftep_portal.key',
+  $tls_cert                        = undef,
+  $tls_chain                       = undef,
+  $tls_key                         = undef,
 ) {
 
   require ::ftep::globals
@@ -63,6 +64,12 @@ class ftep::proxy (
     $gui_backend_prefix = "${ftep::globals::default_gui_hostname}\$1"
   }
 
+  if $graylog_server_url_includes_api {
+    $graylog_server_url = "${ftep::globals::base_url}${ftep::globals::graylog_api_path}"
+  } else {
+    $graylog_server_url = "${ftep::globals::base_url}${ftep::globals::graylog_context_path}"
+  }
+
   $default_proxy_config = {
     docroot    => '/var/www/html',
     vhost_name => '_default_', # The default landing site should always be Drupal
@@ -84,7 +91,7 @@ class ftep::proxy (
       'provider'        => 'location',
       'path'            => $real_context_path_logs,
       'custom_fragment' =>
-      "RequestHeader set X-Graylog-Server-URL \"${ftep::globals::base_url}${ftep::globals::graylog_api_path}\""
+      "RequestHeader set X-Graylog-Server-URL \"${graylog_server_url}\""
     }
   ]
 

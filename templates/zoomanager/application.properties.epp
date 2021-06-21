@@ -30,6 +30,8 @@ grpc.port=<%= $grpc_port %>
 management.server.address=<%= $management_address %>
 management.server.port=<%= $management_port %>
 management.server.servlet.context-path=<%= $management_context_path %>
+management.endpoints.jmx.exposure.include=info,health,metrics
+management.endpoints.web.exposure.include=info,health,metrics,jolokia
 
 # Service registry configuration
 eureka.instance.statusPageUrlPath=/info
