@@ -116,7 +116,7 @@ class ftep::monitor::graylog_server (
       password_secret          => $real_db_secret, # Fill in your password secret
       root_password_sha2       => $real_db_sha256, # Fill in your root password hash
       http_bind_address        => "${listen_host}:${real_listen_port}",
-      http_publish_uri         => "http://${listen_host}:${real_listen_port}${real_context_path}/",
+      http_publish_uri         => "${ftep::globals::base_url}${ftep::globals::graylog_context_path}",
       usage_statistics_enabled => false,
     }
   }

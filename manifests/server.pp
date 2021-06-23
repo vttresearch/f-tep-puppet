@@ -133,7 +133,7 @@ class ftep::server (
 
   $real_graylog_api_url = pick($graylog_api_url, "${ftep::globals::base_url}${ftep::globals::graylog_api_path}")
   $real_graylog_api_username = pick($graylog_api_username, $ftep::globals::graylog_api_ftep_username)
-  $real_graylog_api_password = pick($graylog_api_username, $ftep::globals::graylog_api_ftep_password)
+  $real_graylog_api_password = pick($graylog_api_password, $ftep::globals::graylog_api_ftep_password)
 
   $real_gui_url_pattern = pick($gui_url_pattern, "${ftep::globals::base_url}/gui/:__PORT__/")
   $real_traefik_api_url = pick($traefik_api_url, "http://${ftep::globals::default_gui_hostname}:${ftep::globals::traefik_service_port}/api/providers/rest")
