@@ -53,6 +53,7 @@ class ftep::wordpress (
   contain ::ftep::common::apache
   include ::apache::mod::proxy
   include ::apache::mod::proxy_fcgi
+  include ::apache::mod::rewrite
   include ::mysql::server
 
   $real_db_name = pick($db_name, $::ftep::globals::wordpress_db_name)
