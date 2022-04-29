@@ -11,7 +11,7 @@ class ftep::server (
 
   $telegraf_enable                    = true,
 
-  $java_opts                          = '',
+  $java_opts                          = '-Xmx4096m',
 
   # f-tep-server.properties config
   $application_port                   = undef,
