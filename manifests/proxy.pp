@@ -82,10 +82,7 @@ class ftep::proxy (
         rewrite_cond => ['%{HTTP:UPGRADE} ^WebSocket$ [NC]', '%{HTTP:CONNECTION} ^Upgrade$ [NC]'],
         rewrite_rule => ["${gui_match_path}  ws://${gui_backend_prefix} [P]"]
       },
-    ],
-	custom_fragment => "  <If \"%{REQUEST_URI} =~ m#^${real_context_path_gui}/#\">
-      RequestHeader unset Cookie
-  </If>"
+    ]
   }
 
   # Directory/Location directives - cannot be an empty array...
@@ -95,6 +92,11 @@ class ftep::proxy (
       'path'            => $real_context_path_logs,
       'custom_fragment' =>
       "RequestHeader set X-Graylog-Server-URL \"${graylog_server_url}\""
+    },
+    {
+      'provider'        => 'location',
+      'path'            => $real_context_path_gui,
+      'custom_fragment' => "RequestHeader unset Cookie"
     }
   ]
 
