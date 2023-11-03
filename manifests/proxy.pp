@@ -93,12 +93,10 @@ class ftep::proxy (
       'custom_fragment' =>
       "RequestHeader set X-Graylog-Server-URL \"${graylog_server_url}\""
     },
-{
+    {
       'provider'        => 'location',
       'path'            => $real_context_path_gui,
-      'custom_fragment' => "<If \"%{REQUEST_URI} =~ m#^${real_context_path_gui}/#\">
-      RequestHeader unset Cookie
-  </If>"
+      'custom_fragment' => "RequestHeader unset Cookie"
     }	
   ]
 
