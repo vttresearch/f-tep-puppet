@@ -7,10 +7,10 @@ class ftep::geoserver (
   $geoserver_data_dir     = '/opt/geoserver-data',
   $config_file            = '/etc/default/geoserver',
   $init_script            = '/etc/init.d/geoserver',
-  $geoserver_version      = '2.10.0',
-  $geoserver_download_url = 'http://sourceforge.net/projects/geoserver/files/GeoServer/2.10.0/geoserver-2.10.0-bin.zip',
+  $geoserver_version      = '2.25.4',
+  $geoserver_download_url = 'http://sourceforge.net/projects/geoserver/files/GeoServer/2.25.4/geoserver-2.25.4-bin.zip',
   $geoserver_extension    = 'zip',
-  $geoserver_digest       = '86d737c88ac60bc30efd65d3113925ee5c7502db',
+  $geoserver_digest       = 'e523615096b874bbb2e525019ff3de9c79666178',
   $geoserver_digest_type  = 'sha1',
   $geoserver_port         = undef,
   $geoserver_stopport     = undef,
@@ -37,8 +37,15 @@ class ftep::geoserver (
   ensure_packages(['unzip'])
 
   # This is created by the ::archive resource
-  $geoserver_path = "${user_home}/geoserver-2.10.0"
+  $geoserver_path = "${user_home}/geoserver-2.25.4"
 
+  file { $geoserver_path:
+    ensure  => directory,
+    mode    => '0755',
+    owner   => $user,
+    require => User[$user],
+  }
+  
   # Download and unpack the standalone platform-independent binary distribution
   $archive = "geoserver-${geoserver_version}"
   archive { $archive:
@@ -48,7 +55,7 @@ class ftep::geoserver (
     checksum_type => $geoserver_digest_type,
     user          => $user,
     extract       => true,
-    extract_path  => $user_home,
+    extract_path  => "${user_home}/geoserver-2.25.4",
     require       => [User[$user], Package['unzip']],
   }
 
