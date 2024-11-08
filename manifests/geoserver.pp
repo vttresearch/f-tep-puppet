@@ -39,6 +39,13 @@ class ftep::geoserver (
   # This is created by the ::archive resource
   $geoserver_path = "${user_home}/geoserver-2.25.4"
 
+  file { $geoserver_path:
+    ensure  => directory,
+    mode    => '0755',
+    owner   => $user,
+    require => User[$user],
+  }
+  
   # Download and unpack the standalone platform-independent binary distribution
   $archive = "geoserver-${geoserver_version}"
   archive { $archive:
