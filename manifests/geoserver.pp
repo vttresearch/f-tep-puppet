@@ -48,7 +48,7 @@ class ftep::geoserver (
     checksum_type => $geoserver_digest_type,
     user          => $user,
     extract       => true,
-    extract_path  => $user_home/geoserver-2.25.4,
+    extract_path  => "${user_home}/geoserver-2.25.4",
     require       => [User[$user], Package['unzip']],
   }
 
