@@ -320,6 +320,7 @@ class ftep::proxy (
       ssl_chain        => $real_tls_chain_path,
       ssl_key          => $tls_key_path,
       default_vhost    => true,
+	  ssl_proxyengine  => true,
       request_headers  => [
         'set X-Forwarded-Proto "https"'
       ],
