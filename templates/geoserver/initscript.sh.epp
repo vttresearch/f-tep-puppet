@@ -43,7 +43,7 @@ if test -z "$GEOSERVER_DATA_DIR" ; then
 fi
 
 if test -z "$JAVA_HOME" ; then
-  JAVA_HOME="/etc/alternatives/jre_11"
+  JAVA_HOME="/etc/alternatives/jre"
 fi
 
 if test -z "$PORT" ; then

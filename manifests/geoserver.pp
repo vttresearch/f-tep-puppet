@@ -86,7 +86,7 @@ END
   file { $config_file:
     ensure  => present,
     content => inline_epp($config_file_epp, {
-      'java_home'          => '/etc/alternatives/jre',
+      'java_home'          => '/etc/alternatives/jre_11',
       'geoserver_user'     => $user,
       'geoserver_home'     => $geoserver_home,
       'geoserver_data_dir' => $geoserver_data_dir,
