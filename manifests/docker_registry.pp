@@ -20,7 +20,7 @@ class ftep::docker_registry (
     'health'  => { 'storagedriver' => { 'enabled' => true, 'interval' => '10s', 'threshold' => 3 } }
   },
   $additional_config                = {
-    'storage' => { 'delete' => { 'enabled' => 'true' } }
+    'storage' => { 'delete' => { 'enabled' => true } }
   },
 ) {
 
